@@ -28,7 +28,7 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-export default function VirtualTour() {
+export default function VirtualTour({ tourSpot }) {
     const [instruments, setInstruments] = useState([]);
     const [selectedInstrument, setSelectedInstrument] = useState(null);
 
@@ -49,6 +49,8 @@ export default function VirtualTour() {
         setSelectedInstrument(null);
     };
 
+    const tourImage = tourSpot?.image_path || 'https://pannellum.org/images/alma.jpg';
+
     return (
         <>
             <Head title="Taman Alat Virtual Tour" />
@@ -60,9 +62,9 @@ export default function VirtualTour() {
                     <Pannellum
                         width="100%"
                         height="100vh"
-                        image="https://pannellum.org/images/alma.jpg" // Placeholder image
+                        image={tourImage}
                         pitch={10}
-                        yaw={180}
+                        yaw={tourSpot && tourSpot.yaw ? tourSpot.yaw : 180}
                         hfov={110}
                         autoLoad
                     >
@@ -106,6 +108,20 @@ export default function VirtualTour() {
                         <p className="text-gray-600 mb-4 whitespace-pre-line">
                             {selectedInstrument.description || "Belum ada deskripsi untuk alat ini."}
                         </p>
+
+                        {selectedInstrument.function && (
+                            <div className="mb-2">
+                                <p className="text-sm font-semibold text-gray-700">Fungsi:</p>
+                                <p className="text-gray-600 whitespace-pre-line">{selectedInstrument.function}</p>
+                            </div>
+                        )}
+
+                        {selectedInstrument.working_principle && (
+                            <div className="mb-2">
+                                <p className="text-sm font-semibold text-gray-700">Cara Kerja:</p>
+                                <p className="text-gray-600 whitespace-pre-line">{selectedInstrument.working_principle}</p>
+                            </div>
+                        )}
 
                         {selectedInstrument.audio_path && (
                             <div className="mt-4">

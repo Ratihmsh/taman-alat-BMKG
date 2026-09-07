@@ -8,3 +8,5 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::apiResource('instruments', \App\Http\Controllers\InstrumentController::class);
+
+Route::get('weather', [\App\Http\Controllers\WeatherController::class, 'show']);
