@@ -38,7 +38,7 @@ class AdminDashboardController extends Controller
             $weather = Http::timeout(8)
                 ->acceptJson()
                 ->get('https://api.bmkg.go.id/publik/prakiraan-cuaca', [
-                    'adm4' => config('services.bmkg.adm4', '31.71.03.1001'),
+                    'adm4' => config('services.bmkg.adm4', '35.15.17.2015'),
                 ]);
 
             if ($weather->successful()) {

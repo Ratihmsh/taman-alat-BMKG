@@ -157,7 +157,7 @@ export default function Welcome({ contents = {} }) {
                                         </div>
                                         <div>
                                             <p className="text-sm text-gray-500">Angin</p>
-                                            <p className="text-xl font-bold text-gray-900">{weather.current.wind_speed} m/s</p>
+                                            <p className="text-xl font-bold text-gray-900">{weather.current.wind_speed} km/j</p>
                                             <p className="text-sm text-gray-500">Arah: {weather.current.wind_direction} ({weather.current.wind_deg}°)</p>
                                         </div>
                                     </div>

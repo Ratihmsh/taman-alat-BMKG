@@ -10,7 +10,7 @@ class WeatherController extends Controller
 {
     public function show(Request $request)
     {
-        $adm4 = $request->query('adm4', config('services.bmkg.adm4', '31.71.03.1001'));
+        $adm4 = $request->query('adm4', config('services.bmkg.adm4', '35.15.17.2015'));
 
         $data = Cache::remember('bmkg_weather_' . $adm4, 300, function () use ($adm4) {
             try {
@@ -69,7 +69,7 @@ class WeatherController extends Controller
             'units' => [
                 'temperature' => '°C',
                 'humidity' => '%',
-                'wind_speed' => 'm/s',
+                'wind_speed' => 'km/j',
                 'precipitation' => 'mm',
             ],
         ];
@@ -84,7 +84,7 @@ class WeatherController extends Controller
             'units' => [
                 'temperature' => '°C',
                 'humidity' => '%',
-                'wind_speed' => 'm/s',
+                'wind_speed' => 'km/j',
                 'precipitation' => 'mm',
             ],
             'error' => 'Data cuaca tidak tersedia saat ini.',

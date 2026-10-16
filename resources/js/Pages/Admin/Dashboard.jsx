@@ -119,7 +119,7 @@ export default function Dashboard({ stats, latestActivity }) {
                             <div className="space-y-2 text-sm text-gray-600">
                                 <p>📍 {stats.latestWeather.location}</p>
                                 <p>💧 Kelembapan: {stats.latestWeather.humidity}%</p>
-                                <p>💨 Angin: {stats.latestWeather.wind_speed} m/s ({stats.latestWeather.wind_direction})</p>
+                                <p>💨 Angin: {stats.latestWeather.wind_speed} km/j ({stats.latestWeather.wind_direction})</p>
                                 <p className="text-xs text-gray-400">
                                     Update: {stats.latestWeather.updated_at ? String(stats.latestWeather.updated_at).replace('T', ' ').slice(0, 16) : '-'} WIB
                                 </p>
