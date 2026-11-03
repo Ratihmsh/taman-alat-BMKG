@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { Pannellum } from "pannellum-react";
 import axios from 'axios';
 
@@ -43,7 +43,8 @@ export default function VirtualTour() {
     }, []);
 
     const handleHotspotClick = (instrument) => {
-        setSelectedInstrument(instrument);
+        // Direct to Informasi Alat page for the selected instrument
+        router.visit(`/informasi-alat?id=${instrument.id}`);
     };
 
     const closePopup = () => {
@@ -80,7 +81,8 @@ export default function VirtualTour() {
                             .map(inst => (
                                 <Pannellum.Hotspot
                                     key={inst.id}
-                                    type="info"
+                                    type="custom"
+                                    cssClass="bmkg-red-marker"
                                     pitch={inst.pitch}
                                     yaw={inst.yaw}
                                     text={inst.name}
@@ -110,6 +112,14 @@ export default function VirtualTour() {
                     </div>
 
                     <div className="pointer-events-auto flex items-center gap-2">
+                        <Link
+                            href="/informasi-alat"
+                            className="inline-flex items-center gap-2 bg-white/90 hover:bg-white text-gray-800 font-semibold px-4 py-2.5 rounded-full shadow-lg backdrop-blur-md transition-all hover:scale-105 text-sm border border-white/40"
+                        >
+                            <span>📖</span>
+                            <span className="hidden sm:inline">Informasi Alat</span>
+                        </Link>
+
                         <button
                             onClick={() => setShowDrawer(!showDrawer)}
                             className="inline-flex items-center gap-2 bg-blue-600/90 hover:bg-blue-600 text-white font-medium px-4 py-2.5 rounded-full shadow-lg backdrop-blur-md transition-all hover:scale-105 text-sm border border-blue-400/30"
@@ -123,6 +133,7 @@ export default function VirtualTour() {
                     </div>
                 </div>
 
+
                 {/* Bottom Floating Hint Bar */}
                 <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-30 pointer-events-none hidden md:block">
                     <div className="bg-gray-900/75 backdrop-blur-md text-white/90 text-xs px-5 py-2 rounded-full shadow-xl border border-white/10 flex items-center gap-4">
@@ -135,7 +146,7 @@ export default function VirtualTour() {
                         </span>
                         <span className="text-white/30">&bull;</span>
                         <span className="flex items-center gap-1.5">
-                            <span>📍</span> Klik ikon titik untuk detail instrumen
+                            <span>📍</span> Klik penanda merah untuk membuka Informasi Alat
                         </span>
                     </div>
                 </div>
@@ -152,7 +163,7 @@ export default function VirtualTour() {
                         >
                             <div className="flex items-center justify-between pb-4 border-b border-gray-100 mb-4">
                                 <div>
-                                    <h2 className="text-lg font-bold text-gray-900">Daftar Instrumen BMKG</h2>
+                                    <h2 className="text-lg font-bold text-gray-900">Daftar {instruments.length} Alat Utama BMKG</h2>
                                     <p className="text-xs text-gray-500">Pilih alat untuk melihat detail penjelasan</p>
                                 </div>
                                 <button 
@@ -166,30 +177,44 @@ export default function VirtualTour() {
                             </div>
 
                             <div className="flex-1 space-y-3">
-                                {instruments.map(inst => (
-                                    <div 
-                                        key={inst.id}
-                                        onClick={() => {
-                                            handleHotspotClick(inst);
-                                            setShowDrawer(false);
-                                        }}
-                                        className="p-4 rounded-xl border border-gray-100 bg-gray-50 hover:bg-blue-50/50 hover:border-blue-200 transition-all cursor-pointer group"
-                                    >
-                                        <div className="flex items-center justify-between gap-2 mb-1.5">
-                                            <h3 className="font-bold text-sm text-gray-800 group-hover:text-blue-700">
-                                                {inst.name}
-                                            </h3>
-                                            {inst.category && (
-                                                <span className="text-[10px] bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full font-semibold shrink-0">
-                                                    {inst.category}
-                                                </span>
+                                {instruments.map((inst, idx) => {
+                                    const parts = (inst.description || '').split(/Fungsi:\s*/i);
+                                    const shortDesc = parts[0]?.trim() || '';
+                                    const functionDesc = parts[1]?.trim() || '';
+
+                                    return (
+                                        <div 
+                                            key={inst.id}
+                                            onClick={() => {
+                                                handleHotspotClick(inst);
+                                                setShowDrawer(false);
+                                            }}
+                                            className="p-3.5 rounded-xl border border-gray-150 bg-gray-50 hover:bg-blue-50/70 hover:border-blue-300 transition-all cursor-pointer group"
+                                        >
+                                            <div className="flex items-center justify-between gap-2 mb-1.5">
+                                                <h3 className="font-bold text-sm text-gray-800 group-hover:text-blue-700 flex items-center gap-1.5">
+                                                    <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-700 text-[10px] flex items-center justify-center font-bold">
+                                                        {idx + 1}
+                                                    </span>
+                                                    <span>{inst.name}</span>
+                                                </h3>
+                                                {inst.category && (
+                                                    <span className="text-[10px] bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full font-semibold shrink-0">
+                                                        {inst.category}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <p className="text-xs text-gray-600 line-clamp-2 mb-1">
+                                                {shortDesc}
+                                            </p>
+                                            {functionDesc && (
+                                                <p className="text-[11px] text-blue-800 bg-blue-50/80 p-1.5 rounded-lg border border-blue-100 line-clamp-2">
+                                                    <strong>Fungsi:</strong> {functionDesc}
+                                                </p>
                                             )}
                                         </div>
-                                        <p className="text-xs text-gray-600 line-clamp-2">
-                                            {inst.description || "Klik untuk melihat detail instrumen ini."}
-                                        </p>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>

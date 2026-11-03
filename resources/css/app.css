@@ -1,3 +1,76 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Custom BMKG Red Marker Hotspot */
+.pnlm-hotspot-base.bmkg-red-marker {
+    width: 8px !important;
+    height: 8px !important;
+    background-color: #ef4444; /* red-500 */
+    border: 1.5px solid #ffffff;
+    border-radius: 50% !important;
+    box-shadow: 0 0 4px rgba(239, 68, 68, 0.8), 0 1px 2px rgba(0, 0, 0, 0.35);
+    cursor: pointer;
+    z-index: 20;
+    transition: background-color 0.15s ease, box-shadow 0.15s ease;
+    /* Do NOT set or animate transform here so Pannellum positioning remains 100% fixed */
+}
+
+/* Expanded hit area so the compact marker remains easy to click/tap */
+.pnlm-hotspot-base.bmkg-red-marker::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    right: -8px;
+    bottom: -8px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+/* Maintain exact position on hover, click, and press (paten/tidak bergeser) */
+.pnlm-hotspot-base.bmkg-red-marker:hover,
+.pnlm-hotspot-base.bmkg-red-marker:active,
+.pnlm-hotspot-base.bmkg-red-marker:focus {
+    background-color: #dc2626;
+    box-shadow: 0 0 6px rgba(220, 38, 38, 0.95), 0 1px 3px rgba(0, 0, 0, 0.45);
+    /* Strictly no transform change */
+}
+
+/* Tooltip on hover */
+.pnlm-hotspot-base.bmkg-red-marker span {
+    visibility: hidden;
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(15, 23, 42, 0.95);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    transition: opacity 0.15s ease, visibility 0.15s ease;
+    pointer-events: none;
+    z-index: 30;
+}
+
+.pnlm-hotspot-base.bmkg-red-marker span::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -4px;
+    border-width: 4px;
+    border-style: solid;
+    border-color: rgba(15, 23, 42, 0.95) transparent transparent transparent;
+}
+
+.pnlm-hotspot-base.bmkg-red-marker:hover span {
+    visibility: visible;
+    opacity: 1;
+}
