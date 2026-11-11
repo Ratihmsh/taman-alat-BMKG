@@ -36,6 +36,7 @@ class PageContentController extends Controller
         ],
         'footer' => [
             'footer_address',
+            'footer_map_url',
             'footer_email',
             'footer_phone',
             'footer_tagline',

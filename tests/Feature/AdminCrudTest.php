@@ -22,6 +22,8 @@ class AdminCrudTest extends TestCase
         parent::setUp();
 
         Http::fake(['*' => Http::response(['data' => [], 'lokasi' => []], 200)]);
+
+        $this->actingAs(User::factory()->create(['role' => 'super']));
     }
 
     // ---------------------------------------------------------------------

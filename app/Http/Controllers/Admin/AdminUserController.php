@@ -43,6 +43,7 @@ class AdminUserController extends Controller
 
         $user = User::create([
             'name' => $validated['name'],
+            'username' => $this->generateUsername($validated['email']),
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role' => $validated['role'],
@@ -51,6 +52,19 @@ class AdminUserController extends Controller
         ActivityLogger::record('create', User::class, $user->id, "Menambahkan admin '{$user->name}'");
 
         return redirect()->route('admin.users')->with('success', 'Akun admin berhasil ditambahkan.');
+    }
+
+    private function generateUsername(string $email): string
+    {
+        $base = Str::slug(Str::before($email, '@'), '') ?: 'admin';
+        $username = $base;
+        $suffix = 1;
+
+        while (User::where('username', $username)->exists()) {
+            $username = $base.$suffix++;
+        }
+
+        return $username;
     }
 
     public function destroy(User $user)

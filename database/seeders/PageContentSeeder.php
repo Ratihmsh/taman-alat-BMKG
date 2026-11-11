@@ -36,6 +36,7 @@ class PageContentSeeder extends Seeder
             'footer' => [
                 'footer_tagline' => 'Menyajikan informasi instrumen klimatologi dan meteorologi yang akurat dan mudah diakses untuk seluruh kalangan.',
                 'footer_address' => 'Jl. Contoh Alamat BMKG No. 123, Jakarta, Indonesia',
+                'footer_map_url' => 'https://www.google.com/maps/search/?api=1&query=Stasiun+Meteorologi+Juanda+BMKG',
                 'footer_email' => 'info@bmkg.go.id',
                 'footer_phone' => '+62 21 1234 5678',
             ],

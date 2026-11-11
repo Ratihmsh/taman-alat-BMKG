@@ -14,6 +14,24 @@ use Inertia\Inertia;
 Route::get('/', function () {
     $contents = \App\Models\PageContent::all()->pluck('value', 'key');
 
+    $instruments = \App\Models\Instrument::where('status', 'aktif')
+        ->orderBy('id')
+        ->limit(10)
+        ->get()
+        ->map(fn ($instrument) => [
+            'id' => $instrument->id,
+            'name' => $instrument->name,
+            'category' => $instrument->category,
+            'description' => $instrument->description,
+            'function' => $instrument->function,
+            'working_principle' => $instrument->working_principle,
+            'image_url' => $instrument->image_path
+                ? (\Illuminate\Support\Str::startsWith($instrument->image_path, ['http://', 'https://'])
+                    ? $instrument->image_path
+                    : \Illuminate\Support\Facades\Storage::disk('public')->url($instrument->image_path))
+                : null,
+        ]);
+
     \App\Models\PageVisit::create(['page' => '/']);
 
     return Inertia::render('Welcome', [
@@ -22,6 +40,7 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
         'contents' => $contents,
+        'instruments' => $instruments,
     ]);
 });
 
@@ -44,7 +63,7 @@ Route::get('/virtual-tour', function () {
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     Route::get('instruments', [AdminInstrumentController::class, 'index'])->name('instruments');

@@ -43,6 +43,7 @@ const groupConfig = {
         fields: [
             { key: 'footer_tagline', label: 'Tagline', type: 'textarea' },
             { key: 'footer_address', label: 'Alamat', type: 'textarea' },
+            { key: 'footer_map_url', label: 'Link Google Maps (untuk Alamat)', type: 'text' },
             { key: 'footer_email', label: 'Email', type: 'text' },
             { key: 'footer_phone', label: 'Telepon', type: 'text' },
         ],

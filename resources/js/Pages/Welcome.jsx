@@ -1,9 +1,14 @@
 import { Head, Link } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import InstrumentCarousel from '@/Components/InstrumentCarousel';
 
-export default function Welcome({ contents = {} }) {
+export default function Welcome({ contents = {}, instruments = [] }) {
     const c = (key, fallback) => contents[key] ?? fallback;
+    const footerAddress = c('footer_address', 'Jl. Contoh Alamat BMKG No. 123, Jakarta, Indonesia');
+    const footerMapUrl =
+        c('footer_map_url', '') ||
+        `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(footerAddress)}`;
     const [weather, setWeather] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -29,15 +34,15 @@ export default function Welcome({ contents = {} }) {
                 <nav className="bg-white shadow-md fixed w-full z-50 top-0">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex justify-between h-16">
-                            <div className="flex items-center">
+                            <div className="flex items-center gap-3">
+                                <img src="/images/logo-bmkg.png" alt="Logo BMKG" className="h-10 w-auto" />
                                 <span className="font-extrabold text-2xl text-blue-800 tracking-tight">TamanAlat<span className="text-blue-500">BMKG</span></span>
                             </div>
                             <div className="hidden md:flex items-center space-x-8">
                                 <a href="#beranda" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">Beranda</a>
                                 <a href="#tentang" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">Tentang Kami</a>
-                                <a href="#fasilitas" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">Fasilitas</a>
                                 <Link
-                                    href="/admin"
+                                    href="/login"
                                     className="border border-blue-500 text-blue-600 hover:bg-blue-50 px-4 py-1.5 rounded-full text-sm font-semibold transition-colors"
                                 >
                                     Admin
@@ -221,40 +226,16 @@ export default function Welcome({ contents = {} }) {
                     </div>
                 </section>
 
-                {/* Fasilitas Section */}
-                <section id="fasilitas" className="py-20 bg-gray-50">
+                {/* Alat-Alat Section */}
+                <section id="alat" className="py-20 bg-gradient-to-b from-white to-gray-50">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="text-center mb-16">
-                            <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">Fasilitas Edukasi</h2>
+                        <div className="text-center mb-12">
+                            <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">Alat-Alat Taman BMKG</h2>
                             <div className="mt-2 w-24 h-1 bg-blue-500 mx-auto rounded"></div>
-                            <p className="mt-4 text-lg text-gray-600">Apa saja yang bisa Anda nikmati melalui platform ini?</p>
+                            <p className="mt-4 text-lg text-gray-600">Jelajahi setiap instrumen beserta fungsi dan cara kerjanya.</p>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            {/* Card 1 */}
-                            <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow border border-gray-100">
-                                <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-6 text-blue-600">
-                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                                </div>
-                                <h3 className="text-xl font-bold text-gray-900 mb-3">{c('facility_1_title', 'Tinjauan 360°')}</h3>
-                                <p className="text-gray-600">{c('facility_1_desc', 'Jelajahi seluruh area taman alat seolah-olah Anda berada di lokasi secara langsung dengan kontrol penuh.')}</p>
-                            </div>
-                            {/* Card 2 */}
-                            <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow border border-gray-100">
-                                <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-6 text-blue-600">
-                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                </div>
-                                <h3 className="text-xl font-bold text-gray-900 mb-3">{c('facility_2_title', 'Informasi Detail Alat')}</h3>
-                                <p className="text-gray-600">{c('facility_2_desc', 'Klik pada instrumen mana pun untuk melihat nama, fungsi, gambar detail, dan cara kerja alat tersebut.')}</p>
-                            </div>
-                            {/* Card 3 */}
-                            <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow border border-gray-100">
-                                <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-6 text-blue-600">
-                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
-                                </div>
-                                <h3 className="text-xl font-bold text-gray-900 mb-3">{c('facility_3_title', 'Panduan Audio')}</h3>
-                                <p className="text-gray-600">{c('facility_3_desc', 'Dengarkan narasi suara yang menjelaskan spesifikasi dan kegunaan setiap alat untuk kemudahan edukasi.')}</p>
-                            </div>
-                        </div>
+
+                        <InstrumentCarousel instruments={instruments} />
                     </div>
                 </section>
 
@@ -262,7 +243,10 @@ export default function Welcome({ contents = {} }) {
                 <footer className="bg-gray-900 text-gray-300 py-12 mt-auto">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div>
-                            <span className="font-extrabold text-2xl text-white tracking-tight mb-4 block">TamanAlat<span className="text-blue-500">BMKG</span></span>
+                            <div className="flex items-center gap-3 mb-4">
+                                <img src="/images/logo-bmkg.png" alt="Logo BMKG" className="h-10 w-auto" />
+                                <span className="font-extrabold text-2xl text-white tracking-tight">TamanAlat<span className="text-blue-500">BMKG</span></span>
+                            </div>
                             <p className="text-gray-400 text-sm">{c('footer_tagline', 'Menyajikan informasi instrumen klimatologi dan meteorologi yang akurat dan mudah diakses untuk seluruh kalangan.')}</p>
                         </div>
                         <div>
@@ -275,7 +259,19 @@ export default function Welcome({ contents = {} }) {
                         </div>
                         <div>
                             <h4 className="text-white font-semibold mb-4">Hubungi Kami</h4>
-                            <p className="text-sm text-gray-400">{c('footer_address', 'Jl. Contoh Alamat BMKG No. 123, Jakarta, Indonesia')}<br />Email: {c('footer_email', 'info@bmkg.go.id')}<br />Telp: {c('footer_phone', '+62 21 1234 5678')}</p>
+                            <p className="text-sm text-gray-400">
+                                <a
+                                    href={footerMapUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    title="Buka di Google Maps"
+                                    className="inline-flex items-start gap-1 hover:text-white underline decoration-dotted underline-offset-2 transition-colors"
+                                >
+                                    <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 21s-6-5.686-6-10a6 6 0 1112 0c0 4.314-6 10-6 10z" /><circle cx="12" cy="11" r="2" strokeWidth="2" /></svg>
+                                    <span>{footerAddress}</span>
+                                </a>
+                                <br />Email: {c('footer_email', 'info@bmkg.go.id')}<br />Telp: {c('footer_phone', '+62 21 1234 5678')}
+                            </p>
                         </div>
                     </div>
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 border-t border-gray-800 text-sm text-center text-gray-500">

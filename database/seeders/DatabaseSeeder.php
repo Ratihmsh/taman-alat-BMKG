@@ -21,8 +21,9 @@ class DatabaseSeeder extends Seeder
             ['email' => 'admin@bmkg.go.id'],
             [
                 'name' => 'Administrator',
+                'username' => 'admin',
                 'email' => 'admin@bmkg.go.id',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('321'),
                 'role' => 'super',
             ]
         );
@@ -76,6 +77,46 @@ class DatabaseSeeder extends Seeder
                 'function' => 'Merekam aktivitas seismik.',
                 'working_principle' => 'Massa pendulum yang diam merekam gerakan tanah relatif terhadap kerangka.',
                 'category' => 'Geofisika',
+                'status' => 'aktif',
+            ],
+            [
+                'name' => 'Penakar Hujan Otomatis',
+                'description' => 'Mengukur curah hujan secara otomatis.',
+                'function' => 'Mengukur jumlah curah hujan dalam satuan milimeter.',
+                'working_principle' => 'Air hujan yang tertampung menggerakkan tipping bucket yang mencatat setiap volume tertentu.',
+                'category' => 'Meteorologi',
+                'status' => 'aktif',
+            ],
+            [
+                'name' => 'Campbell Stokes',
+                'description' => 'Mengukur lama penyinaran matahari.',
+                'function' => 'Mencatat durasi penyinaran matahari.',
+                'working_principle' => 'Bola kaca memfokuskan sinar matahari membakar pias hingga membentuk jejak panjang penyinaran.',
+                'category' => 'Klimatologi',
+                'status' => 'aktif',
+            ],
+            [
+                'name' => 'Piranometer',
+                'description' => 'Mengukur intensitas radiasi matahari.',
+                'function' => 'Mengukur radiasi matahari yang diterima permukaan.',
+                'working_principle' => 'Sensor termopile mengubah perbedaan suhu menjadi sinyal listrik sebanding radiasi.',
+                'category' => 'Klimatologi',
+                'status' => 'aktif',
+            ],
+            [
+                'name' => 'Wind Vane',
+                'description' => 'Mengukur arah angin.',
+                'function' => 'Menunjuk arah datangnya angin.',
+                'working_principle' => 'Sirip penunjuk angin berputar dan mengarahkan ekor mengikuti arah angin.',
+                'category' => 'Meteorologi',
+                'status' => 'aktif',
+            ],
+            [
+                'name' => 'Psikrometer',
+                'description' => 'Mengukur suhu bola basah dan bola kering.',
+                'function' => 'Menentukan kelembapan udara melalui selisih suhu bola basah dan kering.',
+                'working_principle' => 'Penguapan pada termometer bola basah menurunkan suhunya; selisih suhu menunjukkan kelembapan.',
+                'category' => 'Meteorologi',
                 'status' => 'aktif',
             ],
         ];

@@ -1,3 +1,59 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+    @keyframes carouselFade {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes carouselProgress {
+        from {
+            width: 0%;
+        }
+        to {
+            width: 100%;
+        }
+    }
+
+    .carousel-fade {
+        animation: carouselFade 0.5s ease both;
+    }
+
+    .carousel-progress {
+        animation: carouselProgress 300s linear forwards;
+    }
+
+    .carousel-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: #cbd5e1 transparent;
+    }
+
+    .carousel-scrollbar::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    .carousel-scrollbar::-webkit-scrollbar-thumb {
+        background-color: #cbd5e1;
+        border-radius: 9999px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .carousel-fade {
+        animation: none;
+    }
+
+    .carousel-progress {
+        animation: none;
+        width: 100%;
+    }
+}
+
