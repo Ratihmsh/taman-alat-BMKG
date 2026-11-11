@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
+import SimulasiSangkarMeteorologi from '@/Components/SimulasiAlat/SimulasiSangkarMeteorologi';
+import SimulasiPsychrometerStandar from '@/Components/SimulasiAlat/SimulasiPsychrometerStandar';
 
 export default function DetailKerjaAlat({ instrument = null, instruments = [] }) {
     // Default instrument if none passed
@@ -427,6 +429,19 @@ export default function DetailKerjaAlat({ instrument = null, instruments = [] })
                                 </div>
                             </div>
                         </div>
+
+                        {/* Interactive Simulation Section (Specific to Instrument) */}
+                        {activeInstrument && activeInstrument.name.toLowerCase().includes('sangkar meteorologi') && (
+                            <div className="mt-10 pt-8 border-t border-slate-200/80">
+                                <SimulasiSangkarMeteorologi />
+                            </div>
+                        )}
+
+                        {activeInstrument && activeInstrument.name.toLowerCase().includes('psychrometer') && (
+                            <div className="mt-10 pt-8 border-t border-slate-200/80">
+                                <SimulasiPsychrometerStandar />
+                            </div>
+                        )}
                     </div>
                 </main>
 
