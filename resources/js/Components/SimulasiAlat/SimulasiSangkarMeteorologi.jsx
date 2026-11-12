@@ -105,9 +105,9 @@ export default function SimulasiSangkarMeteorologi() {
                     }`}>
                         {isInside ? '🛡️ Terlindungi Sangkar' : '⚠️ Terpapar Radiasi'}
                     </span>
-                    <span className="text-xs font-mono font-bold bg-slate-900 text-amber-400 px-3 py-1 rounded-full border border-slate-700 shadow-2xs">
+                    {/* <span className="text-xs font-mono font-bold bg-slate-900 text-amber-400 px-3 py-1 rounded-full border border-slate-700 shadow-2xs">
                         🕒 {String(hour).padStart(2, '0')}:00 WIB
-                    </span>
+                    </span> */}
                 </div>
             </div>
 

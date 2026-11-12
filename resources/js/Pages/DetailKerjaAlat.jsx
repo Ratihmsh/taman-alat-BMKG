@@ -2,6 +2,11 @@ import React, { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import SimulasiSangkarMeteorologi from '@/Components/SimulasiAlat/SimulasiSangkarMeteorologi';
 import SimulasiPsychrometerStandar from '@/Components/SimulasiAlat/SimulasiPsychrometerStandar';
+import SimulasiHVSampler from '@/Components/SimulasiAlat/SimulasiHVSampler';
+import SimulasiPyranometer from '@/Components/SimulasiAlat/SimulasiPyranometer';
+import SimulasiPanciPenguapan from '@/Components/SimulasiAlat/SimulasiPanciPenguapan';
+import SimulasiAnemometer from '@/Components/SimulasiAlat/SimulasiAnemometer';
+import SimulasiCampbellStokes from '@/Components/SimulasiAlat/SimulasiCampbellStokes';
 
 export default function DetailKerjaAlat({ instrument = null, instruments = [] }) {
     // Default instrument if none passed
@@ -440,6 +445,36 @@ export default function DetailKerjaAlat({ instrument = null, instruments = [] })
                         {activeInstrument && activeInstrument.name.toLowerCase().includes('psychrometer') && (
                             <div className="mt-10 pt-8 border-t border-slate-200/80">
                                 <SimulasiPsychrometerStandar />
+                            </div>
+                        )}
+
+                        {activeInstrument && (activeInstrument.name.toLowerCase().includes('high volume') || activeInstrument.name.toLowerCase().includes('hv sampler')) && (
+                            <div className="mt-10 pt-8 border-t border-slate-200/80">
+                                <SimulasiHVSampler />
+                            </div>
+                        )}
+
+                        {activeInstrument && activeInstrument.name.toLowerCase().includes('pyranometer') && (
+                            <div className="mt-10 pt-8 border-t border-slate-200/80">
+                                <SimulasiPyranometer />
+                            </div>
+                        )}
+
+                        {activeInstrument && (activeInstrument.name.toLowerCase().includes('panci penguapan') || activeInstrument.name.toLowerCase().includes('evaporimeter')) && (
+                            <div className="mt-10 pt-8 border-t border-slate-200/80">
+                                <SimulasiPanciPenguapan />
+                            </div>
+                        )}
+
+                        {activeInstrument && activeInstrument.name.toLowerCase().includes('anemometer') && (
+                            <div className="mt-10 pt-8 border-t border-slate-200/80">
+                                <SimulasiAnemometer />
+                            </div>
+                        )}
+
+                        {activeInstrument && activeInstrument.name.toLowerCase().includes('campbell stokes') && (
+                            <div className="mt-10 pt-8 border-t border-slate-200/80">
+                                <SimulasiCampbellStokes />
                             </div>
                         )}
                     </div>
