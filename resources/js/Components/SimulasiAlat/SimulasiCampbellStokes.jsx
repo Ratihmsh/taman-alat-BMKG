@@ -1,95 +1,138 @@
-import React, { useState } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 
 export default function SimulasiCampbellStokes() {
-    // 1. Slider Waktu Penyinaran Matahari (06:00 s/d 18:00 WIB, format desimal)
-    const [solarHour, setSolarHour] = useState(12.0); // Default 12:00 (siang puncak)
+    // 1. Slider Waktu Penyinaran Matahari (06:00 - 18:00 WIB, desimal)
+    const [solarHour, setSolarHour] = useState(11.5); // Default 11:30
 
-    // 2. Status Awan Melintas / Tutupan Awan (Cerah vs Awan Mendung)
-    // Jika awan melintas, radiasi langsung < 120 W/m2 (standar WMO), titik api padam & tidak membakar
+    // 2. Jenis Kertas Pias Terpasang:
+    // 'straight' (Lurus - Ekuinoks Mar/Sep),
+    // 'long_curved' (Lengkung Panjang - 12 Apr - 2 Sep / Deklinasi Utara),
+    // 'short_curved' (Lengkung Pendek - 15 Okt - 28 Feb / Deklinasi Selatan)
+    const [selectedCard, setSelectedCard] = useState('straight');
+
+    // 3. Pilihan Bulan dalam Setahun (Untuk Verifikasi SOP Deklinasi BMKG)
+    const [selectedMonth, setSelectedMonth] = useState('mar'); // 'mar', 'jun', 'des'
+
+    // 4. Status Tutupan Awan (Cerah vs Awan Mendung / Radiasi < 120 W/m2)
     const [isCloudCovered, setIsCloudCovered] = useState(false);
 
-    // 3. Tipe Kertas Pias Terpasang (Standar 3 Jenis BMKG Berdasarkan Deklinasi Semu Matahari)
-    // 'straight' (Lurus - Ekuinoks Mar/Sep), 'long' (Lengkung Panjang - Musim Panas), 'short' (Lengkung Pendek - Musim Dingin)
-    const [selectedCardType, setSelectedCardType] = useState('straight');
+    // 5. Status Embun Pagi pada Bola Kaca (Buram vs Jernih)
+    const [hasMorningDew, setHasMorningDew] = useState(false);
 
-    // 4. Pilihan Musim / Periode Bulan Pengamatan
-    // 'equinox' (Maret/September), 'solstice_north' (Juni - Matahari di Utara), 'solstice_south' (Desember - Matahari di Selatan)
-    const [seasonPeriod, setSeasonPeriod] = useState('equinox');
+    // 6. Kalibrasi Poros Utara-Selatan (true = tepat, false = melenceng 15 derajat)
+    const [isAlignedNorthSouth, setIsAlignedNorthSouth] = useState(true);
 
-    // 5. Status Embun Pagi pada Bola Kaca (true = Kaca Bening Kering, false = Kaca Berembun Buram)
-    const [isGlassClean, setIsGlassClean] = useState(true);
+    // --- FITUR BARU 1: KOREKSI LOCAL APPARENT TIME (LAT) VS WIB ---
+    // Bujur stasiun (misal Surabaya/Sidoarjo 112.7° BT) memiliki selisih ~31 menit dari meridian 105° BT WIB
+    // isLATCorrected = true jika observer telah menyelaraskan garis jam 12:00 pias ke Waktu Matahari Sejati
+    const [isLATCorrected, setIsLATCorrected] = useState(true);
 
-    // 6. Kalibrasi Poros Orientasi Utara - Selatan (true = Tepat Sejajar, false = Miring Meleset)
-    const [isNorthSouthAligned, setIsNorthSouthAligned] = useState(true);
+    // --- FITUR BARU 2: KONDISI KERTAS BASAH AKIBAT HUJAN (WET CARD EFFECT) ---
+    // 'dry' (kering normal), 'wet' (sedang hujan/basah kuyup), 'drying' (matahari menyinari tapi masih menguapkan air)
+    const [cardWetness, setCardWetness] = useState('dry');
 
-    // --- CEK KESESUAIAN PIAS DENGAN MUSIM (SOP BMKG) ---
-    // Aturan BMKG Belahan Bumi Selatan (Indonesia Tropis):
-    // Ekuinoks (Mar/Sep) -> Pias Lurus (Celah Tengah)
-    // Juni (Matahari di Utara 23.5° LU) -> Pias Lengkung Pendek
-    // Desember (Matahari di Selatan 23.5° LS) -> Pias Lengkung Panjang
-    const getCardSlotMatch = () => {
-        if (seasonPeriod === 'equinox' && selectedCardType === 'straight') return true;
-        if (seasonPeriod === 'solstice_north' && selectedCardType === 'short') return true;
-        if (seasonPeriod === 'solstice_south' && selectedCardType === 'long') return true;
-        return false;
+    // Timer simulasi evaporasi kertas basah (drying -> dry)
+    useEffect(() => {
+        let timer;
+        if (cardWetness === 'drying') {
+            timer = setTimeout(() => {
+                setCardWetness('dry');
+            }, 3500); // 3.5 detik simulasi pengeringan serat kertas
+        }
+        return () => clearTimeout(timer);
+    }, [cardWetness]);
+
+    const handleRainToggle = () => {
+        if (cardWetness === 'dry' || cardWetness === 'drying') {
+            setCardWetness('wet');
+            setIsCloudCovered(true);
+        } else {
+            // Hujan reda, matahari muncul kembali -> proses pengeringan karton pias (drying)
+            setCardWetness('drying');
+            setIsCloudCovered(false);
+        }
     };
 
-    const isCardCorrectlyMatched = getCardSlotMatch();
+    // --- LOGIKA KESESUAIAN PIAS DENGAN BULAN (SOP BMKG / WMO) ---
+    const getCardValidation = () => {
+        if (selectedMonth === 'mar') {
+            return selectedCard === 'straight' 
+                ? { valid: true, note: 'Tepat! Bulan Maret (Ekuinoks) menggunakan Pias Lurus pada alur tengah.' }
+                : { valid: false, note: 'Salah pias! Bulan Maret seharusnya menggunakan Pias Lurus.' };
+        }
+        if (selectedMonth === 'jun') {
+            return selectedCard === 'long_curved'
+                ? { valid: true, note: 'Tepat! Bulan Juni (Matahari di Utara) menggunakan Pias Lengkung Panjang pada alur bawah.' }
+                : { valid: false, note: 'Salah pias! Bulan Juni memerlukan Pias Lengkung Panjang.' };
+        }
+        if (selectedMonth === 'des') {
+            return selectedCard === 'short_curved'
+                ? { valid: true, note: 'Tepat! Bulan Desember memerlukan Pias Lengkung Pendek pada alur atas.' }
+                : { valid: false, note: 'Salah pias! Bulan Desember memerlukan Pias Lengkung Pendek.' };
+        }
+        return { valid: true, note: '' };
+    };
 
-    // Syarat pembakaran aktif (Burn Active):
-    // 1. Tidak tertutup awan (radiasi > 120 W/m2)
-    // 2. Bola kaca bersih dari embun
-    // 3. Poros sejajar Utara-Selatan
-    // 4. Kertas pias cocok dengan musim (titik api jatuh pas di atas kertas)
-    // 5. Jam antara 06.30 - 17.30 WIB
-    const isBurningActive = 
-        !isCloudCovered && 
-        isGlassClean && 
-        isNorthSouthAligned && 
-        isCardCorrectlyMatched && 
-        solarHour >= 6.5 && 
-        solarHour <= 17.5;
+    const cardStatus = getCardValidation();
 
-    // --- POSISI TITIK API FOKUS DI ATAS KERTAS PIAS (SVG X, Y) ---
-    // Rentang jam 06:00 - 18:00 dipetakan ke koordinat X mangkuk: 90 s/d 370
-    const focalProgress = (solarHour - 6) / 12; // 0 s/d 1
-    const focalX = 90 + focalProgress * 280;
+    // --- INTENSITAS PENYINARAN MATAHARI & AMBANG BATAS PEMBAKARAN (120 W/m2) ---
+    const calculateClearSkyRadiation = (h) => {
+        if (h < 6 || h > 18) return 0;
+        return Math.max(0, Math.sin(((h - 6) / 12) * Math.PI) * 1000);
+    };
 
-    // Koordinat Y titik fokus tergantung kemiringan/deklinasi matahari
-    // Jika pias salah, titik api meleset ke luar kertas pias!
-    let focalY = 195;
-    if (seasonPeriod === 'solstice_north') focalY = 186;
-    if (seasonPeriod === 'solstice_south') focalY = 204;
-    if (!isNorthSouthAligned) focalY += 15; // Meleset jatuh ke mangkuk logam
+    const currentRawRad = calculateClearSkyRadiation(solarHour);
+    const currentRad = isCloudCovered ? 80 : (hasMorningDew ? currentRawRad * 0.4 : currentRawRad);
+    
+    // Syarat terjadinya pembakaran titik api:
+    // 1. Radiasi >= 120 W/m2
+    // 2. Kertas pias sesuai alur deklinasi
+    // 3. Bola kaca tidak buram embun
+    // 4. Poros utara-selatan selaras
+    // 5. Kertas pias SUDAH KERING (jika masih basah/drying, energi panas terserap untuk evaporasi air!)
+    const isBurningActive = currentRad >= 120 && cardStatus.valid && !hasMorningDew && isAlignedNorthSouth && cardWetness === 'dry';
 
-    // Posisi Matahari di Langit
-    const sunAngleRad = Math.PI * (1 - focalProgress);
-    const sunSkyX = 230 - 180 * Math.cos(sunAngleRad);
-    const sunSkyY = 120 - 95 * Math.sin(sunAngleRad);
+    // --- HISTORI JEJAK TERBAKAR (WMO RULES: LUBANG TEMBUS, COKELAT, TITIK-TITIK) ---
+    // Slot jam 06:00 - 18:00
+    const hoursSlot = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
+    const burnSegments = hoursSlot.map((h) => {
+        const inPassedCloud = isCloudCovered && (h >= 12 && h <= 13.5);
+        const reached = solarHour >= h;
+        const burned = reached && !inPassedCloud && cardStatus.valid && !hasMorningDew && cardWetness !== 'wet';
+        
+        // Jenis jejak menurut WMO:
+        // 'deep' = lubang tembus hitam (terik > 400 W/m2)
+        // 'scorched' = cokelat terbakar permukaan (pagi/sore/awan tipis)
+        // 'spot' = bintik-bintik terputus
+        let burnType = 'deep';
+        if (h <= 7 || h >= 17) {
+            burnType = 'scorched';
+        } else if (isCloudCovered && (h === 11 || h === 14)) {
+            burnType = 'spot';
+        }
 
-    // --- DATA JAM GOSONG HARIAN (SKENARIO PEMBAKARAN LPM) ---
-    // Mensimulasikan jejak gosong sepanjang hari (jam 08:00 - 16:00 standar BMKG)
-    // Jika awan menutupi saat siang (misal jam 10-11 atau saat isCloudCovered), jejak putus
-    const recordedHours = [
-        { hour: 7, burned: true },
-        { hour: 8, burned: true },
-        { hour: 9, burned: true },
-        { hour: 10, burned: !isCloudCovered },
-        { hour: 11, burned: false }, // Awan mendung lewat
-        { hour: 12, burned: !isCloudCovered },
-        { hour: 13, burned: !isCloudCovered },
-        { hour: 14, burned: true },
-        { hour: 15, burned: true },
-        { hour: 16, burned: !isCloudCovered },
-        { hour: 17, burned: false },
-    ];
+        return { hour: h, burned, burnType };
+    });
 
-    // Total jam terbakar standar pengamatan BMKG (08:00 - 16:00 = 8 jam acuan resmi)
-    const totalBurnedHours = recordedHours
-        .filter(h => h.hour >= 8 && h.hour <= 16 && h.burned)
-        .length + (isBurningActive ? 0.5 : 0);
+    // Menghitung lama penyinaran matahari (LPM) dalam jam pada jam efektif pengamatan BMKG (08.00 - 16.00)
+    const effectiveHours = [8, 9, 10, 11, 12, 13, 14, 15, 16];
+    const totalEffectiveBurned = effectiveHours.filter((h) => {
+        if (solarHour < h) return false;
+        if (isCloudCovered && (h === 12 || h === 13)) return false;
+        if (cardWetness === 'wet' || cardWetness === 'drying') return false;
+        return cardStatus.valid && !hasMorningDew;
+    }).length;
 
-    const sunshineDurationPercentage = Number(((totalBurnedHours / 8) * 100).toFixed(1));
+    // Persentase Penyinaran Matahari (%) Standar BMKG (Acuan 8 Jam Pengamatan)
+    const totalPossibleHoursBMKG = 8;
+    const lpmPercentage = Math.min(100, Number(((totalEffectiveBurned / totalPossibleHoursBMKG) * 100).toFixed(1)));
+
+    // Posisi Titik Api di Mangkuk Kertas Pias (X dan Y)
+    // Jika LAT belum dikoreksi, garis bergeser offset sebesar 22px (~30 menit)
+    const latOffset = isLATCorrected ? 0 : 22;
+    const burnX = 60 + ((solarHour - 6) / 12) * 340 + latOffset;
+    const basePiasY = selectedCard === 'long_curved' ? 228 : (selectedCard === 'short_curved' ? 212 : 220);
+    const burnY = isAlignedNorthSouth ? basePiasY : basePiasY + 14;
 
     // Format Jam dan Menit
     const hourInt = Math.floor(solarHour);
@@ -102,248 +145,310 @@ export default function SimulasiCampbellStokes() {
             <div className="flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-slate-150">
                 <div>
                     <div className="inline-flex items-center gap-1.5 bg-amber-50 text-amber-800 font-bold text-[11px] px-3 py-1 rounded-full uppercase tracking-wider mb-1.5 border border-amber-200/60">
-                        <span>☀️</span> Penyinaran Matahari & Aktinometri
+                        <span>☀️</span> Penyinaran Matahari & Optika Meteorologi
                     </div>
                     <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-                        <span>🔍</span> Simulasi Campbell Stokes (Lama Penyinaran Matahari)
+                        <span>🔍</span> Simulasi Campbell Stokes (Lama Penyinaran)
                     </h3>
                     <p className="text-xs text-slate-500">
-                        Simulasi optika bola kaca pejal, fokus titik api, jejak gosong kertas pias, dan analisis persentase LPM BMKG.
+                        Fisika titik api lensa bola kaca pejal, koreksi Waktu Matahari Sejati (LAT), 3 varian pias, dan analisis jejak WMO No. 8.
                     </p>
                 </div>
 
                 {/* Status Ringkas Header */}
                 <div className="flex items-center gap-2">
-                    <span className={`text-xs font-bold px-3 py-1 rounded-full border ${isBurningActive ? 'bg-amber-100 text-amber-800 border-amber-300' : 'bg-slate-100 text-slate-600 border-slate-200'}`}>
-                        {isBurningActive ? '🔥 Terbakar Aktif (Fokus Api)' : '⚪ Tidak Terbakar (Redup/Meleset)'}
+                    <span className={`text-xs font-bold px-3 py-1 rounded-full border ${isBurningActive ? 'bg-amber-100 text-amber-800 border-amber-300' : 'bg-slate-100 text-slate-600 border-slate-300'}`}>
+                        {cardWetness === 'wet' ? '🌧️ Hujan (Kertas Basah)' : cardWetness === 'drying' ? '💨 Evaporasi Air Pias...' : isBurningActive ? '🔥 Titik Api Aktif (Membakar)' : '⚪ Tidak Membakar (<120 W/m²)'}
                     </span>
                     <span className="text-xs font-mono font-bold bg-slate-900 text-amber-400 px-3 py-1 rounded-full border border-slate-700 shadow-2xs">
-                        🕒 {formattedTime} WIB
+                        LPM: {totalEffectiveBurned} Jam ({lpmPercentage}%)
                     </span>
                 </div>
             </div>
 
-            {/* Layout Utama 60% Visual Diorama (7 Kolom) vs 40% Panel Kontrol & Analisis (5 Kolom) */}
+            {/* Layout Utama Asimetris: 60% Visual Optik (7 Kolom) vs 40% Kontrol Pias & Kalkulator (5 Kolom) */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                {/* SISI KIRI (60% / 7 Kolom): KANVAS VISUAL OPTIKA BOLA KACA & MANGKUK PIAS */}
+                {/* SISI KIRI (60% / 7 Kolom): KANVAS OPTIKA BOLA KACA & MANGKUK PIAS */}
                 <div className="lg:col-span-7 space-y-3.5">
                     <div className="relative rounded-2xl border border-slate-200 bg-gradient-to-b from-sky-200 via-sky-50 to-slate-100 p-4 sm:p-5 overflow-hidden shadow-xs">
                         {/* Status Bar Kecil di Atas Kanvas */}
                         <div className="flex items-center justify-between mb-2 text-xs">
                             <span className="font-bold text-slate-700 flex items-center gap-1.5">
                                 <span>{isCloudCovered ? '☁️' : '☀️'}</span>
-                                <span>Radiasi Langsung: <strong>{isCloudCovered ? 'Terhalang Awan (<120 W/m²)' : 'Cerah Terang (>120 W/m²)'}</strong></span>
+                                <span>Radiasi: <strong>{Math.round(currentRad)} W/m²</strong> {currentRad >= 120 ? '(≥120 W/m² WMO)' : '(<120 W/m²)'}</span>
                             </span>
-                            <span className={`text-[11px] font-bold ${isBurningActive ? 'text-amber-600 animate-pulse' : 'text-rose-600'}`}>
-                                {!isGlassClean 
-                                    ? '⚠️ Bola Kaca Berembun!' 
-                                    : !isNorthSouthAligned 
-                                    ? '⚠️ Poros Meleset dari Utara-Selatan!' 
-                                    : !isCardCorrectlyMatched 
-                                    ? '⚠️ Pias Salah Alur / Musim!' 
-                                    : isCloudCovered 
-                                    ? '☁️ Awan Menutupi Sinar' 
-                                    : '🎯 Titik Api Tepat di Garis Pias!'}
+                            <span className={`text-[11px] font-bold ${cardStatus.valid && isAlignedNorthSouth && !hasMorningDew && isLATCorrected && cardWetness === 'dry' ? 'text-emerald-600' : 'text-rose-600 animate-pulse'}`}>
+                                {!isLATCorrected 
+                                    ? '⚠️ Jam Pias Belum Dikoreksi ke LAT!' 
+                                    : cardWetness === 'wet'
+                                    ? '🌧️ Kertas Basah Kuyup!'
+                                    : cardWetness === 'drying'
+                                    ? '💨 Menguapkan Air (Belum Nyala)'
+                                    : !cardStatus.valid 
+                                    ? '⚠️ Pias Salah Pasang!' 
+                                    : !isAlignedNorthSouth 
+                                    ? '⚠️ Poros U-S Melenceng!' 
+                                    : hasMorningDew 
+                                    ? '⚠️ Kaca Berembun!' 
+                                    : '✅ Fokus Tepat di Garis Pias'}
                             </span>
                         </div>
 
-                        {/* Diagram SVG Interaktif: Bola Kaca Pejal & Mangkuk Pias Campbell Stokes */}
-                        <svg viewBox="0 0 460 290" className="w-full h-auto select-none drop-shadow-md mx-auto">
+                        {/* Diagram SVG Optika Bola Kaca & Kertas Pias */}
+                        <svg viewBox="0 0 460 300" className="w-full h-auto select-none drop-shadow-md mx-auto">
                             <defs>
-                                <radialGradient id="sphereGlassGrad" cx="35%" cy="35%" r="65%">
+                                <radialGradient id="glassSphereGrad" cx="35%" cy="35%" r="65%">
                                     <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
-                                    <stop offset="40%" stopColor="#e0f2fe" stopOpacity="0.8" />
-                                    <stop offset="70%" stopColor="#38bdf8" stopOpacity="0.45" />
-                                    <stop offset="100%" stopColor="#0284c7" stopOpacity="0.75" />
+                                    <stop offset="40%" stopColor="#e0f2fe" stopOpacity="0.65" />
+                                    <stop offset="70%" stopColor="#bae6fd" stopOpacity="0.45" />
+                                    <stop offset="100%" stopColor="#38bdf8" stopOpacity="0.8" />
                                 </radialGradient>
-                                <radialGradient id="sunGlowCS" cx="50%" cy="50%" r="50%">
-                                    <stop offset="0%" stopColor="#fef08a" />
-                                    <stop offset="70%" stopColor="#f59e0b" />
-                                    <stop offset="100%" stopColor="#b45309" stopOpacity="0" />
+                                <radialGradient id="focusPointGlow" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" stopColor="#ffffff" />
+                                    <stop offset="40%" stopColor="#fef08a" />
+                                    <stop offset="80%" stopColor="#f97316" />
+                                    <stop offset="100%" stopColor="#ef4444" stopOpacity="0" />
                                 </radialGradient>
-                                <linearGradient id="bowlBrassGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <linearGradient id="brassBowlGrad" x1="0%" y1="0%" x2="100%" y2="0%">
                                     <stop offset="0%" stopColor="#78350f" />
-                                    <stop offset="35%" stopColor="#d97706" />
-                                    <stop offset="70%" stopColor="#fde047" />
-                                    <stop offset="100%" stopColor="#b45309" />
+                                    <stop offset="50%" stopColor="#d97706" />
+                                    <stop offset="100%" stopColor="#92400e" />
                                 </linearGradient>
                             </defs>
 
-                            {/* MATAHARI DI LANGIT */}
-                            <g transform={`translate(${sunSkyX}, ${sunSkyY})`}>
-                                <circle cx="0" cy="0" r="22" fill="url(#sunGlowCS)" />
-                                <circle cx="0" cy="0" r="14" fill="#f59e0b" />
-                                <text x="0" y="3" textAnchor="middle" fill="#78350f" fontSize="8" fontWeight="black">☀️</text>
+                            {/* MATAHARI DI LANGIT MENGIKUTI WAKTU */}
+                            {(() => {
+                                const sunProgress = (solarHour - 6) / 12;
+                                const sunAngleRad = Math.PI * (1 - sunProgress);
+                                const sunX = 230 - 180 * Math.cos(sunAngleRad);
+                                const sunY = 120 - 90 * Math.sin(sunAngleRad);
+
+                                return (
+                                    <g>
+                                        <g opacity={isCloudCovered ? 0.25 : 0.75}>
+                                            <line x1={sunX} y1={sunY} x2="230" y2="135" stroke="#f59e0b" strokeWidth="3" strokeDasharray="6 4" className="animate-pulse" />
+                                            <line x1={sunX - 10} y1={sunY} x2="215" y2="135" stroke="#fbbf24" strokeWidth="2" strokeDasharray="4 4" />
+                                            <line x1={sunX + 10} y1={sunY} x2="245" y2="135" stroke="#fbbf24" strokeWidth="2" strokeDasharray="4 4" />
+                                        </g>
+
+                                        <circle cx={sunX} cy={sunY} r="18" fill="#fbbf24" filter="drop-shadow(0 0 8px rgba(245,158,11,0.6))" />
+                                        <circle cx={sunX} cy={sunY} r="12" fill="#f59e0b" />
+                                        <text x={sunX} y={sunY + 4} textAnchor="middle" fill="#78350f" fontSize="8" fontWeight="black">☀️</text>
+
+                                        {isCloudCovered && (
+                                            <g transform={`translate(${sunX - 30}, ${sunY - 10})`}>
+                                                <ellipse cx="30" cy="12" rx="28" ry="14" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="1.5" />
+                                                <ellipse cx="18" cy="8" rx="18" ry="12" fill="#ffffff" />
+                                                <ellipse cx="42" cy="8" rx="20" ry="12" fill="#cbd5e1" />
+                                                <text x="30" y="16" textAnchor="middle" fill="#475569" fontSize="7" fontWeight="bold">Mendung</text>
+                                            </g>
+                                        )}
+                                    </g>
+                                );
+                            })()}
+
+                            {/* PENYANGGA LOGAM KUNINGAN & DUDUKAN ALAT */}
+                            <g transform="translate(230, 275)">
+                                <rect x="-14" y="-35" width="28" height="40" fill="#b45309" stroke="#451a03" strokeWidth="2" rx="2" />
+                                <ellipse cx="0" cy="5" rx="55" ry="8" fill="#78350f" stroke="#451a03" strokeWidth="2" />
+                                <text x="0" y="2" textAnchor="middle" fill="#fef3c7" fontSize="6" fontWeight="bold">DUDUKAN LINTANG (LATITUDE 7° LS)</text>
                             </g>
 
-                            {/* AWAN MELINTAS JIKA isCloudCovered = TRUE */}
-                            {isCloudCovered && (
-                                <g transform={`translate(${sunSkyX - 35}, ${sunSkyY - 10})`} className="animate-pulse">
-                                    <ellipse cx="35" cy="12" rx="30" ry="16" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="1.5" />
-                                    <ellipse cx="20" cy="8" rx="18" ry="14" fill="#ffffff" />
-                                    <ellipse cx="48" cy="8" rx="20" ry="14" fill="#cbd5e1" />
-                                    <text x="35" y="16" textAnchor="middle" fill="#475569" fontSize="7" fontWeight="bold">Awan</text>
-                                </g>
-                            )}
-
-                            {/* BERKAS SINAR MATAHARI KONVERGEN (FOKUS) MENEMBUS BOLA KACA */}
-                            {!isCloudCovered && (
-                                <g opacity={isGlassClean ? 0.75 : 0.3}>
-                                    {/* Sinar masuk dari matahari ke bola kaca (230, 140) */}
-                                    <line x1={sunSkyX} y1={sunSkyY} x2="200" y2="120" stroke="#f59e0b" strokeWidth="2" strokeDasharray="4 3" />
-                                    <line x1={sunSkyX} y1={sunSkyY} x2="260" y2="120" stroke="#f59e0b" strokeWidth="2" strokeDasharray="4 3" />
-                                    {/* Sinar keluar mengkerucut ke titik fokus di kertas pias */}
-                                    <polygon
-                                        points={`205,150 255,150 ${focalX},${focalY}`}
-                                        fill="rgba(251, 191, 36, 0.35)"
-                                        stroke="#f59e0b"
-                                        strokeWidth="1.5"
-                                    />
-                                </g>
-                            )}
-
-                            {/* ======================================================== */}
-                            {/* INSTRUMEN CAMPBELL STOKES FISIK (BOLA KACA & MANGKUK)   */}
-                            {/* ======================================================== */}
-                            
-                            {/* Dudukan Kaki Logam Tembaga / Kuningan Berat */}
-                            <g transform="translate(230, 240)">
-                                <rect x="-65" y="15" width="130" height="15" rx="3" fill="#451a03" stroke="#1c1917" strokeWidth="2" />
-                                <circle cx="0" cy="10" r="14" fill="#b45309" stroke="#78350f" strokeWidth="2" />
-                                {/* Busur Penyetel Garis Lintang (Latitude Scale ~7° LS) */}
-                                <path d="M -35 15 A 35 35 0 0 1 35 15" fill="none" stroke="#fde047" strokeWidth="2.5" />
-                                <text x="0" y="26" textAnchor="middle" fill="#fef08a" fontSize="6" fontWeight="bold">LATITUDE: 7.4° S</text>
-                            </g>
-
-                            {/* MANGKUK TEMBAGA SETENGAH LINGKARAN (SPHERICAL BOWL DENGAN 3 ALUR/CELAH) */}
-                            <g transform="translate(230, 140)">
-                                {/* Mangkuk Logam Belakang */}
+                            {/* MANGKUK BOLA LOGAM (SPHERICAL BOWL) */}
+                            <g transform="translate(230, 190)">
                                 <path
-                                    d="M -155 45 A 165 80 0 0 0 155 45 L 140 70 A 150 70 0 0 1 -140 70 Z"
-                                    fill="url(#bowlBrassGrad)"
-                                    stroke="#78350f"
-                                    strokeWidth="2.5"
+                                    d="M -180 30 Q -180 85 0 85 Q 180 85 180 30"
+                                    fill="none"
+                                    stroke="url(#brassBowlGrad)"
+                                    strokeWidth="18"
+                                    strokeLinecap="round"
                                 />
 
-                                {/* 3 ALUR CELAH PIAS (SLOT ATAS, TENGAH, BAWAH) */}
-                                <path d="M -135 48 A 145 68 0 0 0 135 48" fill="none" stroke="#451a03" strokeWidth="2" strokeDasharray="4 2" />
-                                <path d="M -138 56 A 148 70 0 0 0 138 56" fill="none" stroke="#451a03" strokeWidth="2.5" />
-                                <path d="M -135 64 A 145 68 0 0 0 135 64" fill="none" stroke="#451a03" strokeWidth="2" strokeDasharray="4 2" />
+                                {/* Alur 1 (Atas): Pias Lengkung Pendek */}
+                                <path d="M -160 22 Q 0 75 160 22" fill="none" stroke="#451a03" strokeWidth="2" strokeDasharray="4 3" opacity="0.5" />
+                                {/* Alur 2 (Tengah): Pias Lurus */}
+                                <path d="M -170 30 Q 0 83 170 30" fill="none" stroke="#451a03" strokeWidth="2.5" opacity="0.6" />
+                                {/* Alur 3 (Bawah): Pias Lengkung Panjang */}
+                                <path d="M -160 38 Q 0 91 160 38" fill="none" stroke="#451a03" strokeWidth="2" strokeDasharray="4 3" opacity="0.5" />
+                            </g>
 
-                                {/* KERTAS PIAS BIRU TEBAL TERPASANG (CARD) */}
-                                <g>
-                                    {/* Bentuk Kertas Pias Tergantung Tipe yang Dipilih */}
-                                    {selectedCardType === 'straight' && (
-                                        <path
-                                            d="M -135 52 A 145 69 0 0 0 135 52 L 132 60 A 145 69 0 0 1 -132 60 Z"
-                                            fill="#1e3a8a"
-                                            stroke="#60a5fa"
-                                            strokeWidth="1.5"
-                                        />
-                                    )}
-                                    {selectedCardType === 'long' && (
-                                        <path
-                                            d="M -145 56 A 155 75 0 0 0 145 56 L 142 66 A 155 75 0 0 1 -142 66 Z"
-                                            fill="#1e3a8a"
+                            {/* KERTAS PIAS BIRU KHUSUS TERPASANG DI MANGKUK */}
+                            <g transform="translate(230, 190)">
+                                {/* Warna kertas pias: jika basah/wet menjadi biru tua pekat kehijauan */}
+                                {selectedCard === 'straight' && (
+                                    <path
+                                        d="M -170 30 Q 0 83 170 30"
+                                        fill="none"
+                                        stroke={cardWetness === 'wet' ? "#0f172a" : cardWetness === 'drying' ? "#1e293b" : "#1e3a8a"}
+                                        strokeWidth="12"
+                                        strokeLinecap="round"
+                                    />
+                                )}
+                                {selectedCard === 'long_curved' && (
+                                    <path
+                                        d="M -160 38 Q 0 91 160 38"
+                                        fill="none"
+                                        stroke={cardWetness === 'wet' ? "#0f172a" : cardWetness === 'drying' ? "#1e293b" : "#1d4ed8"}
+                                        strokeWidth="12"
+                                        strokeLinecap="round"
+                                    />
+                                )}
+                                {selectedCard === 'short_curved' && (
+                                    <path
+                                        d="M -160 22 Q 0 75 160 22"
+                                        fill="none"
+                                        stroke={cardWetness === 'wet' ? "#0f172a" : cardWetness === 'drying' ? "#1e293b" : "#2563eb"}
+                                        strokeWidth="12"
+                                        strokeLinecap="round"
+                                    />
+                                )}
+
+                                {/* Indikator Kertas Basah Mengkilap */}
+                                {cardWetness === 'wet' && (
+                                    <text x="0" y="70" textAnchor="middle" fill="#38bdf8" fontSize="7" fontWeight="bold">
+                                        💧 KERTAS PIAS BASAH KUYUP
+                                    </text>
+                                )}
+
+                                {/* Garis Skala Jam di Kertas Pias */}
+                                {[-140, -95, -48, 0, 48, 95, 140].map((xOffset, i) => {
+                                    const yOffset = selectedCard === 'long_curved' ? 38 : (selectedCard === 'short_curved' ? 22 : 30);
+                                    const yCurved = yOffset + (1 - Math.abs(xOffset) / 170) * 53;
+                                    // Jika LAT belum dikoreksi, skala garis bergeser offset
+                                    const renderedX = xOffset + (isLATCorrected ? 0 : 12);
+                                    return (
+                                        <line
+                                            key={i}
+                                            x1={renderedX}
+                                            y1={yCurved - 5}
+                                            x2={renderedX}
+                                            y2={yCurved + 5}
                                             stroke="#93c5fd"
                                             strokeWidth="1.5"
                                         />
-                                    )}
-                                    {selectedCardType === 'short' && (
-                                        <path
-                                            d="M -125 46 A 135 62 0 0 0 125 46 L 123 54 A 135 62 0 0 1 -123 54 Z"
-                                            fill="#1e3a8a"
-                                            stroke="#38bdf8"
-                                            strokeWidth="1.5"
+                                    );
+                                })}
+
+                                {/* JEJAK GOSONG / TERBAKAR (CHARRED BURN TRACE DENGAN GAYA WMO) */}
+                                {burnSegments.map((seg, i) => {
+                                    if (!seg.burned || i === burnSegments.length - 1) return null;
+                                    const x1 = -160 + (i / 12) * 320 + latOffset;
+                                    const x2 = -160 + ((i + 1) / 12) * 320 + latOffset;
+                                    const yBase = selectedCard === 'long_curved' ? 38 : (selectedCard === 'short_curved' ? 22 : 30);
+                                    const y1 = yBase + (1 - Math.abs(x1) / 170) * 53;
+                                    const y2 = yBase + (1 - Math.abs(x2) / 170) * 53;
+
+                                    if (seg.burnType === 'spot') {
+                                        // WMO: Titik-titik bulat individual
+                                        return (
+                                            <circle
+                                                key={i}
+                                                cx={(x1 + x2) / 2}
+                                                cy={(y1 + y2) / 2}
+                                                r="3"
+                                                fill="#27272a"
+                                                stroke="#78350f"
+                                                strokeWidth="1"
+                                            />
+                                        );
+                                    }
+
+                                    return (
+                                        <line
+                                            key={i}
+                                            x1={x1}
+                                            y1={y1}
+                                            x2={x2}
+                                            y2={y2}
+                                            stroke={seg.burnType === 'deep' ? "#09090b" : "#78350f"}
+                                            strokeWidth={seg.burnType === 'deep' ? "5" : "3.5"}
+                                            strokeLinecap="round"
+                                            className="drop-shadow-xs"
                                         />
-                                    )}
-
-                                    {/* Garis-Garis Skala Jam pada Kertas Pias (06 s/d 18) */}
-                                    {[-110, -85, -60, -35, -10, 15, 40, 65, 90, 115].map((x, i) => (
-                                        <line key={i} x1={x} y1="52" x2={x} y2="60" stroke="#93c5fd" strokeWidth="1" />
-                                    ))}
-
-                                    {/* JEJAK GOSONG / TERBAKAR PADA KERTAS PIAS (CHARRED BURN TRACE) */}
-                                    {/* Garis gosong coklat gelap/hitam berlubang */}
-                                    <path
-                                        d="M -105 56 L -40 56 M -10 56 L 50 56"
-                                        fill="none"
-                                        stroke="#1c1917"
-                                        strokeWidth="3.5"
-                                        strokeLinecap="round"
-                                    />
-                                    <path
-                                        d="M -105 56 L -40 56 M -10 56 L 50 56"
-                                        fill="none"
-                                        stroke="#ea580c"
-                                        strokeWidth="1.5"
-                                    />
-                                </g>
+                                    );
+                                })}
                             </g>
 
-                            {/* BOLA KACA PEJAL TRANSPARAN (DIAMETER 10 CM STANDAR WMO) */}
-                            <g transform="translate(230, 140)">
+                            {/* BOLA KACA PEJAL BERSINAR (SOLID GLASS SPHERE 10 CM) */}
+                            <g transform="translate(230, 135)">
+                                <ellipse cx="0" cy="55" rx="42" ry="10" fill="#0f172a" opacity="0.25" />
                                 <circle
                                     cx="0"
                                     cy="0"
-                                    r="46"
-                                    fill="url(#sphereGlassGrad)"
+                                    r="48"
+                                    fill="url(#glassSphereGrad)"
                                     stroke="#38bdf8"
-                                    strokeWidth="2"
-                                    filter="drop-shadow(0 6px 12px rgba(2, 132, 199, 0.3))"
+                                    strokeWidth="2.5"
+                                    className="drop-shadow-lg"
                                 />
-                                {/* Kilau Refleksi Kaca Cembung */}
-                                <ellipse cx="-15" cy="-18" rx="18" ry="10" fill="#ffffff" opacity="0.6" transform="rotate(-30)" />
-                                
-                                {/* EMBUN BURAM JIKA isGlassClean = FALSE */}
-                                {!isGlassClean && (
+                                <ellipse cx="-16" cy="-16" rx="18" ry="12" fill="#ffffff" opacity="0.75" transform="rotate(-25 -16 -16)" />
+                                <circle cx="18" cy="18" r="8" fill="#ffffff" opacity="0.4" />
+
+                                {hasMorningDew && (
                                     <g opacity="0.7">
-                                        <circle cx="0" cy="0" r="45" fill="#f8fafc" filter="blur(1.5px)" />
-                                        <text x="0" y="4" textAnchor="middle" fill="#0284c7" fontSize="8" fontWeight="black">EMBUN TEBAL!</text>
+                                        <circle cx="0" cy="0" r="47" fill="#f8fafc" filter="blur(1px)" />
+                                        <text x="0" y="4" textAnchor="middle" fill="#0369a1" fontSize="9" fontWeight="extrabold">EMBUN PAGI!</text>
                                     </g>
                                 )}
                             </g>
 
-                            {/* TITIK API MENYILAUKAN & ASAP TIPIS DI ATAS KERTAS PIAS */}
-                            {isBurningActive && (
-                                <g transform={`translate(${focalX}, ${focalY})`}>
-                                    {/* Kilau Pijar Api Terang */}
-                                    <circle cx="0" cy="0" r="8" fill="#fef08a" opacity="0.8" className="animate-ping" />
-                                    <circle cx="0" cy="0" r="4.5" fill="#ffffff" />
-                                    <circle cx="0" cy="0" r="2.5" fill="#f59e0b" />
-                                    
-                                    {/* Asap tipis mengepul dari kertas yang terbakar */}
-                                    <g opacity="0.6">
-                                        <path d="M 0 -2 Q -3 -8 0 -14 T 2 -22" fill="none" stroke="#64748b" strokeWidth="1.5" className="animate-pulse" />
-                                        <text x="0" y="-12" textAnchor="middle" fill="#ea580c" fontSize="6" fontWeight="extrabold">Terbakar!</text>
-                                    </g>
+                            {/* BERKAS SINAR MENGERUCUT FOKUS KE KERTAS PIAS */}
+                            {currentRad > 80 && (
+                                <g opacity={isCloudCovered ? 0.25 : 0.85}>
+                                    <polygon
+                                        points={`215,145 245,145 ${burnX},${burnY}`}
+                                        fill="rgba(251, 191, 36, 0.35)"
+                                    />
+                                    <line x1="230" y1="145" x2={burnX} y2={burnY} stroke="#f59e0b" strokeWidth="2.5" />
                                 </g>
                             )}
 
-                            {/* DISPLAY DIGITAL BMKG LOGBOOK DI SUDUT */}
-                            <g transform="translate(345, 25)">
-                                <rect x="0" y="0" width="105" height="70" rx="8" fill="#0f172a" stroke="#334155" strokeWidth="2" filter="drop-shadow(0 4px 6px rgba(0,0,0,0.15))" />
-                                <text x="52" y="16" textAnchor="middle" fill="#94a3b8" fontSize="7" fontWeight="bold">DURASI LPM (08-16)</text>
-                                <text x="52" y="38" textAnchor="middle" fill="#f59e0b" fontSize="17" fontWeight="black" fontFamily="monospace">
-                                    {totalBurnedHours} Jam
-                                </text>
-                                <text x="52" y="52" textAnchor="middle" fill="#38bdf8" fontSize="8" fontWeight="bold">
-                                    {sunshineDurationPercentage}% Sinar
-                                </text>
-                                <text x="52" y="64" textAnchor="middle" fill="#94a3b8" fontSize="6">
-                                    Standar BMKG 8 Jam
-                                </text>
-                            </g>
+                            {/* TITIK API PUTIH MENYILAU ATAU UAP EVAPORASI AIR */}
+                            {isBurningActive && (
+                                <g transform={`translate(${burnX}, ${burnY})`}>
+                                    <circle cx="0" cy="0" r="12" fill="url(#focusPointGlow)" className="animate-ping" />
+                                    <circle cx="0" cy="0" r="5" fill="#ffffff" />
+                                    <circle cx="0" cy="0" r="2.5" fill="#fef08a" />
+                                    
+                                    <path
+                                        d="M 0 -2 Q -4 -12 0 -20 T 4 -28"
+                                        fill="none"
+                                        stroke="#94a3b8"
+                                        strokeWidth="2"
+                                        strokeDasharray="2 3"
+                                        className="animate-pulse"
+                                        opacity="0.8"
+                                    />
+                                    <text x="0" y="-12" textAnchor="middle" fill="#78350f" fontSize="6" fontWeight="black">🔥</text>
+                                </g>
+                            )}
+
+                            {/* EFEK UAP EVAPORASI JIKA KERTAS SEDANG MENGERING (DRYING) */}
+                            {cardWetness === 'drying' && (
+                                <g transform={`translate(${burnX}, ${burnY})`}>
+                                    <circle cx="0" cy="0" r="4" fill="#38bdf8" opacity="0.6" />
+                                    {/* Asap uap air putih mengepul */}
+                                    <path
+                                        d="M -3 0 Q -8 -15 0 -25 T 3 -35"
+                                        fill="none"
+                                        stroke="#ffffff"
+                                        strokeWidth="3"
+                                        strokeLinecap="round"
+                                        className="animate-pulse"
+                                    />
+                                    <text x="0" y="-14" textAnchor="middle" fill="#0284c7" fontSize="6" fontWeight="bold">💨 Uap Air</text>
+                                </g>
+                            )}
                         </svg>
 
-                        {/* FLOATING CONTROLS DI DALAM KANVAS DIORAMA */}
-                        <div className="mt-3 p-3 bg-slate-900/95 backdrop-blur-md text-white rounded-xl border border-slate-700/80 space-y-2.5">
+                        {/* FLOATING CONTROLS SLIDER WAKTU DI BAWAH KANVAS */}
+                        <div className="mt-3 p-3 bg-slate-900/95 backdrop-blur-md text-white rounded-xl border border-slate-700/80 space-y-2">
                             <div className="flex items-center justify-between text-xs">
                                 <span className="text-slate-300 font-semibold flex items-center gap-1.5">
-                                    <span>🕒</span> Lintasan Sinar Matahari:
+                                    <span>🕒</span> Lintasan Waktu Matahari:
                                 </span>
                                 <span className="font-mono font-black text-amber-400">
-                                    Pukul {formattedTime} WIB
+                                    Pukul {formattedTime} WIB {isLATCorrected ? '(LAT Selaras)' : '(LAT Melenceng!)'}
                                 </span>
                             </div>
 
@@ -356,226 +461,223 @@ export default function SimulasiCampbellStokes() {
                                 onChange={(e) => setSolarHour(Number(e.target.value))}
                                 className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-amber-500"
                             />
-
-                            <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-800 text-[11px]">
-                                {/* Toggle Awan Melintas */}
-                                <button
-                                    onClick={() => setIsCloudCovered(!isCloudCovered)}
-                                    className={`px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer border flex items-center gap-1.5 ${
-                                        isCloudCovered 
-                                            ? 'bg-slate-700 text-white border-slate-600' 
-                                            : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
-                                    }`}
-                                >
-                                    <span>{isCloudCovered ? '☁️ Awan Menutupi (Aktif)' : '☀️ Langit Terik Cerah'}</span>
-                                </button>
-
-                                {/* Lap Embun Bola Kaca */}
-                                <button
-                                    onClick={() => setIsGlassClean(!isGlassClean)}
-                                    className={`px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer border flex items-center gap-1.5 ${
-                                        !isGlassClean 
-                                            ? 'bg-sky-600 text-white border-sky-600 animate-pulse' 
-                                            : 'bg-slate-800 text-sky-300 border-sky-700/60 hover:bg-slate-700'
-                                    }`}
-                                >
-                                    <span>{!isGlassClean ? '🧽 Lap Embun Kaca!' : '✨ Bola Kaca Bening'}</span>
-                                </button>
-
-                                {/* Kalibrasi Poros Utara - Selatan */}
-                                <button
-                                    onClick={() => setIsNorthSouthAligned(!isNorthSouthAligned)}
-                                    className={`px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer border flex items-center gap-1.5 ${
-                                        !isNorthSouthAligned 
-                                            ? 'bg-rose-600 text-white border-rose-600 animate-pulse' 
-                                            : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
-                                    }`}
-                                >
-                                    <span>{!isNorthSouthAligned ? '🧭 Luruskan Poros U-S!' : '✅ Poros Sejajar (U-S)'}</span>
-                                </button>
+                            <div className="flex justify-between text-[10px] text-slate-400 font-mono">
+                                <span>06:00 (Terbit)</span>
+                                <span>08:00 (Mulai Hitung)</span>
+                                <span className="text-amber-400 font-bold">12:00 (Zenit)</span>
+                                <span>16:00 (Selesai Hitung)</span>
+                                <span>18:00</span>
                             </div>
                         </div>
                     </div>
 
-                    {/* EDUKASI PRINSIP OPTIKA LENSA BOLA KACA PEJAL */}
-                    <div className="p-3 bg-blue-50/80 rounded-xl border border-blue-200/70 text-[11px] text-blue-900 leading-relaxed flex items-start gap-2">
-                        <span className="text-sm shrink-0">💡</span>
+                    {/* MINI-BAR KONTROL SOP PEMELIHARAAN (EMBUN, HUJAN BASAH, POROS U-S, KALIBRASI LAT) */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-3 bg-slate-50 rounded-2xl border border-slate-200">
+                        {/* 1. Toggle Cuaca Hujan & Wet Card Effect */}
+                        <button
+                            onClick={handleRainToggle}
+                            className={`px-2 py-1.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition-all cursor-pointer border ${
+                                cardWetness === 'wet'
+                                    ? 'bg-blue-600 text-white border-blue-600 shadow-2xs'
+                                    : cardWetness === 'drying'
+                                    ? 'bg-cyan-100 text-cyan-800 border-cyan-300 animate-pulse'
+                                    : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
+                            }`}
+                        >
+                            <span>{cardWetness === 'wet' ? '🌧️ Hujan (Basah)' : cardWetness === 'drying' ? '💨 Mengeringkan...' : '☀️ Kertas Kering'}</span>
+                        </button>
+
+                        {/* 2. Tombol Lap Embun Pagi */}
+                        <button
+                            onClick={() => setHasMorningDew(!hasMorningDew)}
+                            className={`px-2 py-1.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition-all cursor-pointer border ${
+                                hasMorningDew 
+                                    ? 'bg-amber-100 text-amber-800 border-amber-300 animate-pulse' 
+                                    : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
+                            }`}
+                        >
+                            <span>{hasMorningDew ? '🧽 Lap Kaca Buram!' : '✨ Kaca Bening'}</span>
+                        </button>
+
+                        {/* 3. Kalibrasi Poros Utara-Selatan */}
+                        <button
+                            onClick={() => setIsAlignedNorthSouth(!isAlignedNorthSouth)}
+                            className={`px-2 py-1.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition-all cursor-pointer border ${
+                                !isAlignedNorthSouth 
+                                    ? 'bg-rose-100 text-rose-800 border-rose-300 animate-pulse' 
+                                    : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
+                            }`}
+                        >
+                            <span>{!isAlignedNorthSouth ? '🧭 Luruskan U-S!' : '✅ Poros U-S'}</span>
+                        </button>
+
+                        {/* 4. Kalibrasi LAT (Local Apparent Time) */}
+                        <button
+                            onClick={() => setIsLATCorrected(!isLATCorrected)}
+                            className={`px-2 py-1.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition-all cursor-pointer border ${
+                                !isLATCorrected
+                                    ? 'bg-purple-100 text-purple-800 border-purple-300 animate-pulse'
+                                    : 'bg-white text-purple-700 border-purple-200 hover:bg-purple-50'
+                            }`}
+                        >
+                            <span>{!isLATCorrected ? '⚙️ Koreksi LAT!' : '📐 LAT Selaras'}</span>
+                        </button>
+                    </div>
+
+                    {/* EDUKASI PENTINGNYA KOREKSI WAKTU MATAHARI SEJATI (LAT) */}
+                    <div className="p-3 bg-purple-50/80 rounded-xl border border-purple-200/70 text-[11px] text-purple-900 leading-relaxed flex items-start gap-2">
+                        <span className="text-sm shrink-0">📐</span>
                         <div>
-                            <strong>Prinsip Kerja Optik Campbell Stokes:</strong> Bola kaca pejal bertindak sebagai lensa cembung homogen dengan panjang fokus sangat pendek. Ketika intensitas radiasi matahari langsung melebihi <strong>ambang batas $120 \, \text{W/m}^2$</strong>, panas yang terkumpul di titik fokus cukup tinggi untuk mengarangkan (membakar) kertas pias biru khusus tanpa menimbulkan nyala api terbuka.
+                            <strong>Waktu Matahari Sejati (Local Apparent Time / LAT):</strong> Garis jam 12:00 di pias Campbell Stokes harus jatuh tepat di titik kulminasi matahari tertinggi di stasiun lokal (bukan jam 12:00 WIB jam dinding). Selisih bujur Sidoarjo (112.7° BT) dengan meridian pusat WIB (105° BT) adalah ~31 menit lebih cepat!
                         </div>
                     </div>
                 </div>
 
-                {/* SISI KANAN (40% / 5 Kolom): SELEKSI PIAS & KALKULATOR ANALISIS LPM */}
+                {/* SISI KANAN (40% / 5 Kolom): 3 PILIHAN PIAS DEKLINASI & ATURAN ANALISIS WMO */}
                 <div className="lg:col-span-5 space-y-4">
-                    {/* MINI-GAME SOP BMKG: SELEKTOR 3 PIAS & DEKLINASI MUSIM */}
-                    <div className="bg-slate-900 text-white rounded-2xl p-4 sm:p-5 border border-slate-800 space-y-3.5 shadow-xs">
+                    {/* MINI-GAME TEBAK PIAS SESUAI BULAN / GERAK SEMU MATAHARI */}
+                    <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 space-y-3.5 shadow-2xs">
                         <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
-                                <span>📋</span> Prosedur Pemasangan Pias BMKG
+                            <span className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                                <span>📅</span> Musim & 3 Varian Kertas Pias BMKG
                             </span>
-                            <span className={`text-[10px] font-black px-2 py-0.5 rounded-full border ${isCardCorrectlyMatched ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-rose-500/20 text-rose-300 border-rose-500/40 animate-pulse'}`}>
-                                {isCardCorrectlyMatched ? '✅ Pias Sesuai Musim' : '⚠️ Pias Salah Alur!'}
+                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${cardStatus.valid ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200 animate-pulse'}`}>
+                                {cardStatus.valid ? '✅ Pias Sesuai' : '❌ Salah Pias'}
                             </span>
                         </div>
 
-                        {/* 1. Pilih Periode Bulan / Musim Matahari */}
-                        <div className="space-y-1.5">
-                            <span className="text-[10px] text-slate-400 uppercase tracking-wide block">
-                                Posisi Matahari / Periode Bulan:
-                            </span>
+                        {/* 1. Pilih Bulan Kalender */}
+                        <div className="space-y-1">
+                            <label className="text-[11px] font-bold text-slate-600 block">Pilih Waktu Pengamatan (Deklinasi Matahari):</label>
                             <div className="grid grid-cols-3 gap-1.5 text-center text-xs">
                                 <button
-                                    onClick={() => setSeasonPeriod('equinox')}
-                                    className={`p-2 rounded-xl border font-bold transition-all cursor-pointer ${
-                                        seasonPeriod === 'equinox'
-                                            ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-2xs'
-                                            : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-750'
+                                    onClick={() => setSelectedMonth('mar')}
+                                    className={`py-1.5 rounded-lg font-bold border transition-all cursor-pointer ${
+                                        selectedMonth === 'mar'
+                                            ? 'bg-blue-600 text-white border-blue-600 shadow-2xs'
+                                            : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                                     }`}
                                 >
-                                    <span className="block text-[11px]">Ekuinoks</span>
-                                    <span className="text-[9px] text-slate-400">Mar & Sep</span>
+                                    Maret / Sept
+                                    <span className="block text-[9px] font-normal opacity-80">(Ekuinoks)</span>
                                 </button>
-
                                 <button
-                                    onClick={() => setSeasonPeriod('solstice_north')}
-                                    className={`p-2 rounded-xl border font-bold transition-all cursor-pointer ${
-                                        seasonPeriod === 'solstice_north'
-                                            ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-2xs'
-                                            : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-750'
+                                    onClick={() => setSelectedMonth('jun')}
+                                    className={`py-1.5 rounded-lg font-bold border transition-all cursor-pointer ${
+                                        selectedMonth === 'jun'
+                                            ? 'bg-blue-600 text-white border-blue-600 shadow-2xs'
+                                            : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                                     }`}
                                 >
-                                    <span className="block text-[11px]">Utara (BBU)</span>
-                                    <span className="text-[9px] text-slate-400">Mei - Jul</span>
+                                    Juni / Juli
+                                    <span className="block text-[9px] font-normal opacity-80">(BBU / Utara)</span>
                                 </button>
-
                                 <button
-                                    onClick={() => setSeasonPeriod('solstice_south')}
-                                    className={`p-2 rounded-xl border font-bold transition-all cursor-pointer ${
-                                        seasonPeriod === 'solstice_south'
-                                            ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-2xs'
-                                            : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-750'
+                                    onClick={() => setSelectedMonth('des')}
+                                    className={`py-1.5 rounded-lg font-bold border transition-all cursor-pointer ${
+                                        selectedMonth === 'des'
+                                            ? 'bg-blue-600 text-white border-blue-600 shadow-2xs'
+                                            : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                                     }`}
                                 >
-                                    <span className="block text-[11px]">Selatan (BBS)</span>
-                                    <span className="text-[9px] text-slate-400">Nov - Jan</span>
+                                    Desember
+                                    <span className="block text-[9px] font-normal opacity-80">(BBS / Selatan)</span>
                                 </button>
                             </div>
                         </div>
 
-                        {/* 2. Pilih Tipe Kertas Pias (User Harus Memilih yang Pas) */}
-                        <div className="space-y-1.5 pt-2 border-t border-slate-800">
-                            <span className="text-[10px] text-slate-400 uppercase tracking-wide block">
-                                Pasang Kertas Pias ke Celah Mangkuk:
-                            </span>
+                        {/* 2. Pilih Jenis Pias yang Dipasang */}
+                        <div className="space-y-1 pt-1">
+                            <label className="text-[11px] font-bold text-slate-600 block">Pilih Jenis Kertas Pias Terpasang:</label>
                             <div className="grid grid-cols-3 gap-1.5 text-center text-xs">
                                 <button
-                                    onClick={() => setSelectedCardType('straight')}
-                                    className={`p-2 rounded-xl border font-bold transition-all cursor-pointer ${
-                                        selectedCardType === 'straight'
-                                            ? 'bg-blue-600 text-white border-blue-500 shadow-2xs'
-                                            : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-750'
+                                    onClick={() => setSelectedCard('straight')}
+                                    className={`py-2 rounded-lg font-bold border transition-all cursor-pointer ${
+                                        selectedCard === 'straight'
+                                            ? 'bg-amber-600 text-white border-amber-600 shadow-2xs'
+                                            : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                                     }`}
                                 >
-                                    <span className="block text-[11px]">➖ Pias Lurus</span>
-                                    <span className="text-[9px] text-slate-400">Celah Tengah</span>
+                                    ➖ Pias Lurus
+                                    <span className="block text-[9px] font-normal opacity-80">Alur Tengah</span>
                                 </button>
-
                                 <button
-                                    onClick={() => setSelectedCardType('short')}
-                                    className={`p-2 rounded-xl border font-bold transition-all cursor-pointer ${
-                                        selectedCardType === 'short'
-                                            ? 'bg-blue-600 text-white border-blue-500 shadow-2xs'
-                                            : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-750'
+                                    onClick={() => setSelectedCard('long_curved')}
+                                    className={`py-2 rounded-lg font-bold border transition-all cursor-pointer ${
+                                        selectedCard === 'long_curved'
+                                            ? 'bg-amber-600 text-white border-amber-600 shadow-2xs'
+                                            : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                                     }`}
                                 >
-                                    <span className="block text-[11px]">🌒 Lengkung Pendek</span>
-                                    <span className="text-[9px] text-slate-400">Celah Atas</span>
+                                    🌙 Lengkung Pjg
+                                    <span className="block text-[9px] font-normal opacity-80">Alur Bawah</span>
                                 </button>
-
                                 <button
-                                    onClick={() => setSelectedCardType('long')}
-                                    className={`p-2 rounded-xl border font-bold transition-all cursor-pointer ${
-                                        selectedCardType === 'long'
-                                            ? 'bg-blue-600 text-white border-blue-500 shadow-2xs'
-                                            : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-750'
+                                    onClick={() => setSelectedCard('short_curved')}
+                                    className={`py-2 rounded-lg font-bold border transition-all cursor-pointer ${
+                                        selectedCard === 'short_curved'
+                                            ? 'bg-amber-600 text-white border-amber-600 shadow-2xs'
+                                            : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                                     }`}
                                 >
-                                    <span className="block text-[11px]">🌙 Lengkung Panjang</span>
-                                    <span className="text-[9px] text-slate-400">Celah Bawah</span>
+                                    🌒 Lengkung Pdk
+                                    <span className="block text-[9px] font-normal opacity-80">Alur Atas</span>
                                 </button>
                             </div>
                         </div>
 
-                        {!isCardCorrectlyMatched && (
-                            <p className="text-[11px] text-rose-300 bg-rose-950/60 p-2.5 rounded-xl border border-rose-800/80 leading-snug">
-                                ❌ <strong>Pias Tidak Cocok!</strong> Titik api jatuh di luar kertas pias sehingga durasi sinar tidak terekam. Pilih tipe pias yang sesuai dengan periode musim matahari di atas!
-                            </p>
-                        )}
+                        <p className={`text-[11px] p-2.5 rounded-xl border leading-relaxed ${cardStatus.valid ? 'bg-emerald-50 text-emerald-900 border-emerald-200' : 'bg-rose-50 text-rose-900 border-rose-200'}`}>
+                            {cardStatus.note}
+                        </p>
                     </div>
 
-                    {/* KARTU KALKULATOR ANALISIS PIAS (LAMA PENYINARAN MATAHARI % BMKG) */}
+                    {/* KARTU TERPADU: KALKULATOR ANALISIS LPM & ATURAN JEJAK WMO NO. 8 */}
                     <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 sm:p-5 space-y-4 shadow-xs">
                         <div className="flex items-center justify-between">
                             <span className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-                                <span>📐</span> Analisis Lama Penyinaran Matahari (LPM)
+                                <span>📊</span> Analisis Kertas Pias (LPM BMKG)
                             </span>
-                            <span className="text-[10px] bg-amber-100 text-amber-800 font-extrabold px-2 py-0.5 rounded-full border border-amber-200">
-                                WMO Standar
+                            <span className="text-[10px] bg-blue-100 text-blue-800 font-extrabold px-2 py-0.5 rounded-full border border-blue-200">
+                                Standar 08.00 - 16.00
                             </span>
                         </div>
 
-                        {/* Visual Penggaris Pias Harian (Jam 08 - 16) */}
-                        <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-2xs space-y-2">
-                            <span className="text-[10px] font-bold text-slate-500 block uppercase">
-                                Simulasi Pias Terbakar (Jam 08:00 – 16:00 WIB):
-                            </span>
-                            
-                            {/* Baris Strip Pias Kertas */}
-                            <div className="flex h-6 rounded-md overflow-hidden border border-slate-300 bg-blue-900 p-0.5 gap-0.5">
-                                {recordedHours.filter(h => h.hour >= 8 && h.hour <= 16).map((h, i) => (
-                                    <div
-                                        key={i}
-                                        className={`flex-1 flex items-center justify-center text-[8px] font-mono font-bold rounded-xs ${
-                                            h.burned 
-                                                ? 'bg-slate-950 text-amber-400 border border-amber-500/50' 
-                                                : 'bg-blue-800 text-blue-200'
-                                        }`}
-                                    >
-                                        {h.burned ? '🔥' : `${h.hour}`}
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="flex justify-between text-[9px] text-slate-400 font-mono">
-                                <span>08:00</span>
-                                <span>12:00</span>
-                                <span>16:00</span>
-                            </div>
-                        </div>
-
-                        {/* Rincian Angka Durasi & Persentase */}
+                        {/* Kotak Jam Efektif Terbakar vs Total Jam Baku */}
                         <div className="grid grid-cols-2 gap-2 text-center text-xs">
                             <div className="p-2.5 bg-white rounded-xl border border-slate-200 shadow-2xs">
-                                <span className="text-[10px] text-slate-400 block">Durasi Terbakar</span>
-                                <span className="text-sm font-black text-amber-700 font-mono">
-                                    {totalBurnedHours} Jam
+                                <span className="text-[10px] text-slate-400 block">Jejak Terbakar Efektif</span>
+                                <span className="text-base font-black text-amber-600 font-mono">
+                                    {totalEffectiveBurned} Jam
                                 </span>
-                                <span className="text-[9px] text-slate-500">dari 8 Jam Standar</span>
+                                <span className="text-[9px] text-slate-500">(dari max 8 jam pengamatan)</span>
                             </div>
 
                             <div className="p-2.5 bg-white rounded-xl border border-slate-200 shadow-2xs">
-                                <span className="text-[10px] text-slate-400 block">Persentase LPM (%)</span>
-                                <span className="text-sm font-black text-blue-700 font-mono">
-                                    {sunshineDurationPercentage}%
+                                <span className="text-[10px] text-slate-400 block">Persentase Penyinaran</span>
+                                <span className="text-base font-black text-blue-700 font-mono">
+                                    {lpmPercentage}%
                                 </span>
-                                <span className="text-[9px] text-slate-500">Kategori {sunshineDurationPercentage > 60 ? 'Cerah' : 'Berawan'}</span>
+                                <span className="text-[9px] text-slate-500">LPM Harian BMKG</span>
                             </div>
                         </div>
 
-                        {/* Rumus Resmi BMKG */}
+                        {/* Rumus Baku Perhitungan LPM BMKG */}
                         <div className="p-2.5 bg-amber-50/80 rounded-xl border border-amber-200/60 text-[10.5px] text-amber-950 font-mono leading-relaxed">
-                            <strong>Rumus:</strong> LPM (%) = (Jam Terbakar / 8 Jam Standar) × 100% <br />
-                            LPM = ({totalBurnedHours} / 8) × 100% = <strong>{sunshineDurationPercentage}%</strong>
+                            <strong>Rumus:</strong> LPM (%) = (Jam Terbakar / 8 Jam) × 100% <br />
+                            LPM = ({totalEffectiveBurned} / 8) × 100% = <strong>{lpmPercentage}%</strong>
+                        </div>
+
+                        {/* ATURAN REDUKSI JEJAK WMO GUIDE NO. 8 */}
+                        <div className="p-3 bg-white rounded-xl border border-slate-200 space-y-1.5 text-xs">
+                            <span className="text-[10.5px] font-bold text-slate-900 uppercase tracking-wider block">
+                                📏 Panduan Ketelitian Pembacaan WMO No. 8:
+                            </span>
+                            <ul className="text-[10.5px] text-slate-600 space-y-1 list-disc list-inside leading-snug">
+                                <li><strong>Lubang Hitam Tembus:</strong> Terik penuh tanpa awan, dihitung 100% panjang garis.</li>
+                                <li><strong>Cokelat Terbakar Permukaan:</strong> Awan tipis (Cirrus), dihitung jika garis kontinyu jelas.</li>
+                                <li><strong>Titik-Titik Terputus:</strong> Celah awan Cumulus, kurangi separuh diameter titik agar tidak <em>overestimate</em>.</li>
+                                <li><strong>Wet Card Effect:</strong> Kertas basah sehabis hujan menyerap energi panas untuk evaporasi air terlebih dahulu sebelum terbakar (biasanya <em>underestimate</em>).</li>
+                            </ul>
                         </div>
                     </div>
                 </div>

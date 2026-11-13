@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import SimulasiSangkarMeteorologi from '@/Components/SimulasiAlat/SimulasiSangkarMeteorologi';
 import SimulasiPsychrometerStandar from '@/Components/SimulasiAlat/SimulasiPsychrometerStandar';
@@ -7,6 +7,9 @@ import SimulasiPyranometer from '@/Components/SimulasiAlat/SimulasiPyranometer';
 import SimulasiPanciPenguapan from '@/Components/SimulasiAlat/SimulasiPanciPenguapan';
 import SimulasiAnemometer from '@/Components/SimulasiAlat/SimulasiAnemometer';
 import SimulasiCampbellStokes from '@/Components/SimulasiAlat/SimulasiCampbellStokes';
+import SimulasiAutomaticRainGauge from '@/Components/SimulasiAlat/SimulasiAutomaticRainGauge';
+import SimulasiAutomaticWeatherStation from '@/Components/SimulasiAlat/SimulasiAutomaticWeatherStation';
+import SimulasiOmbrometer from '@/Components/SimulasiAlat/SimulasiOmbrometer';
 
 export default function DetailKerjaAlat({ instrument = null, instruments = [] }) {
     // Default instrument if none passed
@@ -475,6 +478,24 @@ export default function DetailKerjaAlat({ instrument = null, instruments = [] })
                         {activeInstrument && activeInstrument.name.toLowerCase().includes('campbell stokes') && (
                             <div className="mt-10 pt-8 border-t border-slate-200/80">
                                 <SimulasiCampbellStokes />
+                            </div>
+                        )}
+
+                        {activeInstrument && (activeInstrument.name.toLowerCase().includes('automatic rain gauge') || activeInstrument.name.toLowerCase().includes('arg') || activeInstrument.name.toLowerCase().includes('penakar hujan otomatis')) && (
+                            <div className="mt-10 pt-8 border-t border-slate-200/80">
+                                <SimulasiAutomaticRainGauge />
+                            </div>
+                        )}
+
+                        {activeInstrument && (activeInstrument.name.toLowerCase().includes('automatic weather station') || activeInstrument.name.toLowerCase().includes('aws') || activeInstrument.name.toLowerCase().includes('stasiun cuaca otomatis')) && (
+                            <div className="mt-10 pt-8 border-t border-slate-200/80">
+                                <SimulasiAutomaticWeatherStation />
+                            </div>
+                        )}
+
+                        {activeInstrument && (activeInstrument.name.toLowerCase().includes('ombrometer') || activeInstrument.name.toLowerCase().includes('obs') || activeInstrument.name.toLowerCase().includes('penakar hujan manual')) && (
+                            <div className="mt-10 pt-8 border-t border-slate-200/80">
+                                <SimulasiOmbrometer />
                             </div>
                         )}
                     </div>
