@@ -33,6 +33,11 @@ export default function VirtualTour() {
     const [selectedInstrument, setSelectedInstrument] = useState(null);
     const [showDrawer, setShowDrawer] = useState(false);
 
+    const isVideoMedia = (path) => {
+        if (!path) return false;
+        return /\.(mp4|webm|ogg|mov)$/i.test(path);
+    };
+
     useEffect(() => {
         // Fetch instruments from API
         axios.get('/api/instruments')
@@ -249,7 +254,23 @@ export default function VirtualTour() {
                             </div>
 
                             {selectedInstrument.image_path && (
-                                <img src={selectedInstrument.image_path} alt={selectedInstrument.name} className="w-full h-48 object-cover rounded-xl mb-4 border border-gray-100" />
+                                isVideoMedia(selectedInstrument.image_path) ? (
+                                    <video 
+                                        src={selectedInstrument.image_path} 
+                                        controls 
+                                        autoPlay 
+                                        muted 
+                                        loop 
+                                        playsInline 
+                                        className="w-full h-48 object-cover rounded-xl mb-4 border border-gray-100" 
+                                    />
+                                ) : (
+                                    <img 
+                                        src={selectedInstrument.image_path} 
+                                        alt={selectedInstrument.name} 
+                                        className="w-full h-48 object-cover rounded-xl mb-4 border border-gray-100" 
+                                    />
+                                )
                             )}
 
                             <p className="text-gray-600 text-sm leading-relaxed mb-4 whitespace-pre-line bg-gray-50 p-4 rounded-xl border border-gray-100">

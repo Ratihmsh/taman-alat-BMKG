@@ -8,7 +8,7 @@ export default function DetailKerjaAlat({ instrument = null, instruments = [] })
         name: 'Sangkar Meteorologi',
         category: 'Klimatologi & Suhu',
         description: 'Bangunan kayu berbentuk rumah kecil bergisi-gisi yang dicat putih, dirancang khusus untuk melindungi peralatan termometer dari radiasi sinar matahari langsung dan hujan.\n\nFungsi:\nTempat meletakkan alat pengukur suhu dan kelembapan udara agar hasil pengukurannya akurat serta mewakili kondisi udara sekitar secara netral.',
-        image_path: null,
+        image_path: '/videos/sangkar_meteorologi.mp4',
         pitch: 32.2,
         yaw: -36.3,
     };
@@ -56,6 +56,11 @@ export default function DetailKerjaAlat({ instrument = null, instruments = [] })
             deskripsi: desc.trim(),
             fungsi: '',
         };
+    };
+
+    const isVideoMedia = (path) => {
+        if (!path) return false;
+        return /\.(mp4|webm|ogg|mov)$/i.test(path);
     };
 
     const activeData = parseInstrumentData(activeInstrument?.description);
@@ -229,19 +234,31 @@ export default function DetailKerjaAlat({ instrument = null, instruments = [] })
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                             {/* Left Column: Visual, Media, & Quick Specs */}
                             <div className="lg:col-span-5 space-y-6">
-                                {/* Photo Container */}
+                                {/* Photo / Video Container */}
                                 <div className="rounded-2xl overflow-hidden relative shadow-sm group aspect-[4/3] bg-slate-100 flex items-center justify-center border border-slate-200/80">
-                                    <img 
-                                        src={activeInstrument.image_path || '/images/panci_penguapan.png'} 
-                                        alt={activeInstrument.name}
-                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
-                                        onError={(e) => { e.target.src = '/images/panci_penguapan.png'; }}
-                                    />
+                                    {isVideoMedia(activeInstrument?.image_path) ? (
+                                        <video 
+                                            src={activeInstrument.image_path} 
+                                            controls
+                                            autoPlay
+                                            muted
+                                            loop
+                                            playsInline
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        <img 
+                                            src={activeInstrument?.image_path || '/images/panci_penguapan.png'} 
+                                            alt={activeInstrument?.name}
+                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
+                                            onError={(e) => { e.target.src = '/images/panci_penguapan.png'; }}
+                                        />
+                                    )}
                                     
                                     <button
                                         onClick={() => setShowLightbox(true)}
                                         className="absolute bottom-3 right-3 bg-black/65 hover:bg-black/85 backdrop-blur-md text-white p-2 rounded-xl flex items-center justify-center transition-all shadow-md cursor-pointer"
-                                        title="Perbesar Foto"
+                                        title={isVideoMedia(activeInstrument?.image_path) ? "Perbesar Video" : "Perbesar Foto"}
                                     >
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
@@ -446,11 +463,21 @@ export default function DetailKerjaAlat({ instrument = null, instruments = [] })
                             >
                                 ✕
                             </button>
-                            <img 
-                                src={activeInstrument?.image_path || '/images/panci_penguapan.png'} 
-                                alt={activeInstrument?.name}
-                                className="max-h-[80vh] w-auto rounded-2xl shadow-2xl object-contain border border-white/20"
-                            />
+                            {isVideoMedia(activeInstrument?.image_path) ? (
+                                <video 
+                                    src={activeInstrument?.image_path} 
+                                    controls
+                                    autoPlay
+                                    playsInline
+                                    className="max-h-[80vh] w-auto max-w-full rounded-2xl shadow-2xl object-contain border border-white/20"
+                                />
+                            ) : (
+                                <img 
+                                    src={activeInstrument?.image_path || '/images/panci_penguapan.png'} 
+                                    alt={activeInstrument?.name}
+                                    className="max-h-[80vh] w-auto rounded-2xl shadow-2xl object-contain border border-white/20"
+                                />
+                            )}
                             <div className="text-white text-center mt-3 text-sm font-medium">
                                 {activeInstrument?.name} &bull; Taman Alat BMKG
                             </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 
 export default function InformasiAlat({ instruments = [], selectedId = null }) {
@@ -10,12 +10,60 @@ export default function InformasiAlat({ instruments = [], selectedId = null }) {
         selectedId ? Number(selectedId) : (defaultInstrument ? defaultInstrument.id : null)
     );
     const [showLightbox, setShowLightbox] = useState(false);
+    const [isCarouselPaused, setIsCarouselPaused] = useState(false);
+    const carouselRef = useRef(null);
+    const showcaseCardRef = useRef(null);
 
     useEffect(() => {
         if (selectedId) {
             setCurrentId(Number(selectedId));
         }
     }, [selectedId]);
+
+    // Continuous auto-scroll loop for horizontal instrument gallery
+    useEffect(() => {
+        const container = carouselRef.current;
+        if (!container) return;
+
+        let animationFrameId;
+        let lastTime = performance.now();
+
+        const step = (currentTime) => {
+            const delta = currentTime - lastTime;
+            lastTime = currentTime;
+
+            if (!isCarouselPaused && container) {
+                // Smooth horizontal pan (~40px/s)
+                container.scrollLeft += delta * 0.04;
+
+                // Seamless infinite loop wrap
+                if (container.scrollLeft >= container.scrollWidth / 2) {
+                    container.scrollLeft -= container.scrollWidth / 2;
+                }
+            }
+            animationFrameId = requestAnimationFrame(step);
+        };
+
+        animationFrameId = requestAnimationFrame(step);
+        return () => cancelAnimationFrame(animationFrameId);
+    }, [isCarouselPaused]);
+
+    const handleCarouselScroll = () => {
+        const container = carouselRef.current;
+        if (!container) return;
+        if (container.scrollLeft >= container.scrollWidth / 2) {
+            container.scrollLeft -= container.scrollWidth / 2;
+        } else if (container.scrollLeft <= 0) {
+            container.scrollLeft += container.scrollWidth / 2;
+        }
+    };
+
+    const scrollCarousel = (direction) => {
+        const container = carouselRef.current;
+        if (!container) return;
+        const scrollAmount = direction === 'left' ? -320 : 320;
+        container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    };
 
     const activeInstrument = instruments.find(item => item.id === currentId) || defaultInstrument || instruments[0];
 
@@ -62,12 +110,20 @@ export default function InformasiAlat({ instruments = [], selectedId = null }) {
         };
     };
 
+    const isVideoMedia = (path) => {
+        if (!path) return false;
+        return /\.(mp4|webm|ogg|mov)$/i.test(path);
+    };
+
     const activeData = parseInstrumentData(activeInstrument?.description);
 
-    const handleSelectInstrument = (id) => {
+    const handleSelectInstrument = (id, scrollToShowcase = false) => {
         setCurrentId(id);
         // Smoothly update URL query without full page reload
         window.history.replaceState(null, '', `/informasi-alat?id=${id}`);
+        if (scrollToShowcase && showcaseCardRef.current) {
+            showcaseCardRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
     };
 
     return (
@@ -205,7 +261,11 @@ export default function InformasiAlat({ instruments = [], selectedId = null }) {
                 {/* 3. Main Showcase Card */}
                 <main className="max-w-6xl mx-auto -mt-10 sm:-mt-12 px-4 sm:px-6 relative z-20 w-full pb-12">
                     {activeInstrument ? (
-                        <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/80 border border-slate-100 p-6 sm:p-8 transition-all">
+                        <div 
+                            ref={showcaseCardRef}
+                            id="showcase-card"
+                            className="bg-white rounded-3xl shadow-xl shadow-slate-200/80 border border-slate-100 p-6 sm:p-8 transition-all scroll-mt-24"
+                        >
                             {/* Card Top: Category Badge & Coordinates */}
                             <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
                                 <span className="inline-block bg-[#e0f2fe] text-[#0284c7] font-bold text-[11px] sm:text-xs px-3.5 py-1 rounded-full uppercase tracking-wider">
@@ -235,32 +295,56 @@ export default function InformasiAlat({ instruments = [], selectedId = null }) {
                                 {/* Left Column: Photo Showcase */}
                                 <div className="lg:col-span-6 flex flex-col">
                                     <div className="rounded-2xl overflow-hidden relative shadow-sm group aspect-[16/11] bg-slate-100 flex items-center justify-center border border-slate-200/80">
-                                        <img 
-                                            src={activeInstrument.image_path || '/images/panci_penguapan.png'} 
-                                            alt={activeInstrument.name}
-                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
-                                            onError={(e) => {
-                                                e.target.src = '/images/panci_penguapan.png';
-                                            }}
-                                        />
+                                        {isVideoMedia(activeInstrument?.image_path) ? (
+                                            <video 
+                                                src={activeInstrument.image_path}
+                                                controls
+                                                autoPlay
+                                                muted
+                                                loop
+                                                playsInline
+                                                className="w-full h-full object-cover"
+                                            />
+                                        ) : (
+                                            <img 
+                                                src={activeInstrument?.image_path || '/images/panci_penguapan.png'} 
+                                                alt={activeInstrument?.name}
+                                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
+                                                onError={(e) => {
+                                                    e.target.src = '/images/panci_penguapan.png';
+                                                }}
+                                            />
+                                        )}
 
-                                        {/* Bottom-left: "Lihat gambar lainnya" button */}
+                                        {/* Bottom-left: "Lihat gambar / video penuh" button */}
                                         <button
                                             onClick={() => setShowLightbox(true)}
                                             className="absolute bottom-3 left-3 bg-black/65 hover:bg-black/85 backdrop-blur-md text-white text-xs font-medium px-3.5 py-1.5 rounded-xl flex items-center gap-1.5 transition-all shadow-md cursor-pointer"
                                         >
-                                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            </svg>
-                                            <span>Lihat gambar penuh</span>
+                                            {isVideoMedia(activeInstrument?.image_path) ? (
+                                                <>
+                                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                    </svg>
+                                                    <span>Lihat video penuh</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    </svg>
+                                                    <span>Lihat gambar penuh</span>
+                                                </>
+                                            )}
                                         </button>
 
                                         {/* Bottom-right: Expand Fullscreen button */}
                                         <button
                                             onClick={() => setShowLightbox(true)}
                                             className="absolute bottom-3 right-3 bg-black/65 hover:bg-black/85 backdrop-blur-md text-white p-2 rounded-xl flex items-center justify-center transition-all shadow-md cursor-pointer"
-                                            title="Perbesar Gambar"
+                                            title={isVideoMedia(activeInstrument?.image_path) ? "Perbesar Video" : "Perbesar Gambar"}
                                         >
                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
@@ -382,92 +466,187 @@ export default function InformasiAlat({ instruments = [], selectedId = null }) {
                         </div>
                     ) : null}
 
-                    {/* 4. Complete Catalog Grid (10 Alat Utama) */}
+                    {/* 4. Horizontal Auto-Scroll Instrument Gallery */}
                     <div className="mt-12">
-                        <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
+                        {/* Section Header with Navigation Controls */}
+                        <div className="flex flex-wrap items-end justify-between gap-4 mb-5">
                             <div>
-                                <span className="text-xs font-bold text-blue-600 uppercase tracking-widest">
-                                    KATALOG LENGKAP
+                                <span className="text-xs font-bold text-blue-600 uppercase tracking-widest flex items-center gap-2">
+                                    <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
+                                    GALERI INSTRUMEN OBSERVASI
                                 </span>
-                                <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
-                                    Daftar {instruments.length} Alat Utama Taman Alat BMKG
+                                <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight mt-1">
+                                    Daftar Visual Alat Utama ({instruments.length} Alat)
                                 </h3>
-                                <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                                    Klik salah satu alat di bawah untuk melihat rincian informasi dan fungsinya.
+                                <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+                                    Disusun horizontal dengan gulir otomatis. Arahkan kursor untuk menjeda, atau klik kartu untuk rincian alat di atas.
                                 </p>
                             </div>
 
-                            <div className="bg-slate-100 text-slate-700 px-3.5 py-1.5 rounded-full text-xs font-bold border border-slate-200">
-                                Total: {instruments.length} Alat
+                            {/* Carousel Control Buttons */}
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={() => scrollCarousel('left')}
+                                    className="p-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-blue-600 hover:border-blue-300 transition-all shadow-xs cursor-pointer active:scale-95"
+                                    title="Gulir ke Kiri"
+                                >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
+                                    </svg>
+                                </button>
+
+                                <button
+                                    onClick={() => setIsCarouselPaused(!isCarouselPaused)}
+                                    className={`px-3 py-2 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer ${
+                                        isCarouselPaused 
+                                            ? 'bg-amber-50 border-amber-300 text-amber-700' 
+                                            : 'bg-white border-slate-200 text-slate-700 hover:border-blue-300 hover:text-blue-600'
+                                    }`}
+                                    title={isCarouselPaused ? "Lanjutkan Gulir Otomatis" : "Jeda Gulir Otomatis"}
+                                >
+                                    {isCarouselPaused ? (
+                                        <>
+                                            <svg className="w-3.5 h-3.5 text-amber-600 fill-current" viewBox="0 0 24 24">
+                                                <polygon points="5 3 19 12 5 21 5 3" />
+                                            </svg>
+                                            <span>Lanjutkan</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <svg className="w-3.5 h-3.5 text-blue-600 fill-current" viewBox="0 0 24 24">
+                                                <rect x="6" y="4" width="4" height="16" />
+                                                <rect x="14" y="4" width="4" height="16" />
+                                            </svg>
+                                            <span>Jeda</span>
+                                        </>
+                                    )}
+                                </button>
+
+                                <button
+                                    onClick={() => scrollCarousel('right')}
+                                    className="p-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-blue-600 hover:border-blue-300 transition-all shadow-xs cursor-pointer active:scale-95"
+                                    title="Gulir ke Kanan"
+                                >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </button>
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                            {instruments.map((inst, index) => {
-                                const isSelected = inst.id === activeInstrument?.id;
-                                const parsed = parseInstrumentData(inst.description);
+                        {/* Horizontal Auto-Scroll Track with Gradient Edges */}
+                        <div className="relative group">
+                            {/* Left gradient mask */}
+                            <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-12 sm:w-16 bg-gradient-to-r from-[#f8fafc] via-[#f8fafc]/70 to-transparent z-10 rounded-l-2xl"></div>
 
-                                return (
-                                    <div
-                                        key={inst.id}
-                                        onClick={() => handleSelectInstrument(inst.id)}
-                                        className={`bg-white rounded-2xl border p-5 flex flex-col justify-between transition-all cursor-pointer group hover:shadow-lg ${
-                                            isSelected 
-                                                ? 'border-blue-600 ring-2 ring-blue-500/20 shadow-md bg-blue-50/20' 
-                                                : 'border-slate-200/80 hover:border-blue-300 shadow-xs'
-                                        }`}
-                                    >
-                                        <div>
-                                            {/* Header: Index number + Category */}
-                                            <div className="flex items-center justify-between gap-2 mb-3">
-                                                <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-extrabold ${
-                                                    isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-700 group-hover:bg-blue-50 group-hover:text-blue-600'
+                            {/* Right gradient mask */}
+                            <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-12 sm:w-16 bg-gradient-to-l from-[#f8fafc] via-[#f8fafc]/70 to-transparent z-10 rounded-r-2xl"></div>
+
+                            {/* Scrolling Container */}
+                            <div
+                                ref={carouselRef}
+                                onMouseEnter={() => setIsCarouselPaused(true)}
+                                onMouseLeave={() => setIsCarouselPaused(false)}
+                                onScroll={handleCarouselScroll}
+                                className="flex items-stretch gap-4 sm:gap-5 overflow-x-auto py-3 px-1 scrollbar-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] cursor-grab active:cursor-grabbing"
+                            >
+                                {[...instruments, ...instruments].map((inst, index) => {
+                                    const isSelected = inst.id === activeInstrument?.id;
+                                    const originalIndex = (index % (instruments.length || 1)) + 1;
+
+                                    return (
+                                        <div
+                                            key={`${inst.id}-${index}`}
+                                            onClick={() => handleSelectInstrument(inst.id, true)}
+                                            className={`w-64 sm:w-72 shrink-0 rounded-2xl border transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between group/card select-none ${
+                                                isSelected 
+                                                    ? 'border-blue-600 ring-2 ring-blue-500/25 bg-blue-50/20 shadow-md scale-[1.01]' 
+                                                    : 'bg-white border-slate-200/90 hover:border-blue-300 hover:shadow-lg hover:-translate-y-0.5'
+                                            }`}
+                                        >
+                                            {/* Media Showcase Area */}
+                                            <div className="aspect-[16/10] w-full relative bg-slate-900 overflow-hidden">
+                                                {isVideoMedia(inst.image_path) ? (
+                                                    <video 
+                                                        src={inst.image_path}
+                                                        muted
+                                                        loop
+                                                        autoPlay
+                                                        playsInline
+                                                        className="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500 pointer-events-none"
+                                                    />
+                                                ) : (
+                                                    <img 
+                                                        src={inst.image_path || `/images/crops/instrument_${(inst.id - 1) % 12}.png`}
+                                                        alt={inst.name}
+                                                        className="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500 pointer-events-none"
+                                                        onError={(e) => { e.target.src = '/images/panci_penguapan.png'; }}
+                                                    />
+                                                )}
+
+                                                {/* Contrast overlay */}
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/30 pointer-events-none"></div>
+
+                                                {/* Top-left: Index Number */}
+                                                <span className={`absolute top-2.5 left-2.5 text-[10px] font-extrabold px-2 py-0.5 rounded-md backdrop-blur-md border ${
+                                                    isSelected 
+                                                        ? 'bg-blue-600 text-white border-blue-400' 
+                                                        : 'bg-black/60 text-white border-white/20'
                                                 }`}>
-                                                    #{index + 1}
+                                                    #{originalIndex}
                                                 </span>
-                                                <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-100">
-                                                    {inst.category || 'Meteorologi'}
+
+                                                {/* Top-right: Media Type Badge */}
+                                                <span className="absolute top-2.5 right-2.5 bg-black/60 backdrop-blur-md text-white text-[10px] font-medium px-2 py-0.5 rounded-md flex items-center gap-1 border border-white/20">
+                                                    {isVideoMedia(inst.image_path) ? (
+                                                        <>
+                                                            <svg className="w-2.5 h-2.5 text-blue-400 fill-current" viewBox="0 0 24 24">
+                                                                <polygon points="5 3 19 12 5 21 5 3" />
+                                                            </svg>
+                                                            <span>Video</span>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <svg className="w-2.5 h-2.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                            </svg>
+                                                            <span>Foto</span>
+                                                        </>
+                                                    )}
+                                                </span>
+
+                                                {/* Bottom category tag */}
+                                                <span className="absolute bottom-2 left-2.5 right-2.5 text-[10px] font-bold uppercase tracking-wider text-blue-200 truncate">
+                                                    {inst.category || 'METEOROLOGI'}
                                                 </span>
                                             </div>
 
-                                            {/* Name */}
-                                            <h4 className="font-bold text-base text-slate-900 group-hover:text-blue-600 transition-colors leading-snug mb-3">
-                                                {inst.name}
-                                            </h4>
+                                            {/* Card Content & Action */}
+                                            <div className="p-3.5 bg-white flex flex-col justify-between flex-1">
+                                                <h4 className="font-bold text-sm text-slate-900 group-hover/card:text-blue-600 transition-colors line-clamp-1 leading-snug">
+                                                    {inst.name}
+                                                </h4>
 
-                                            {/* Deskripsi Singkat */}
-                                            <div className="mb-3">
-                                                <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1 flex items-center gap-1">
-                                                    <span>📄</span> Deskripsi:
+                                                <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                                                    {isSelected ? (
+                                                        <span className="text-blue-600 font-bold flex items-center gap-1">
+                                                            <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></span>
+                                                            Sedang Ditampilkan
+                                                        </span>
+                                                    ) : (
+                                                        <span className="text-slate-400 group-hover/card:text-blue-600 transition-colors font-medium">
+                                                            Klik untuk rincian
+                                                        </span>
+                                                    )}
+                                                    <span className="text-blue-600 font-bold transform group-hover/card:translate-x-1 transition-transform">
+                                                        &rarr;
+                                                    </span>
                                                 </div>
-                                                <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
-                                                    {parsed.deskripsi}
-                                                </p>
-                                            </div>
-
-                                            {/* Fungsi Singkat */}
-                                            <div className="bg-slate-50 p-3 rounded-xl border border-slate-150 mb-4">
-                                                <div className="text-[11px] font-bold text-blue-700 uppercase tracking-wider mb-1 flex items-center gap-1">
-                                                    <span>🎯</span> Fungsi:
-                                                </div>
-                                                <p className="text-xs text-slate-700 line-clamp-2 leading-relaxed">
-                                                    {parsed.fungsi || "Alat observasi cuaca terstandar."}
-                                                </p>
                                             </div>
                                         </div>
-
-                                        {/* Footer Action */}
-                                        <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs">
-                                            <span className={`font-semibold ${isSelected ? 'text-blue-600 font-bold' : 'text-slate-500 group-hover:text-blue-600'}`}>
-                                                {isSelected ? '✓ Sedang Ditampilkan' : 'Pilih Alat Ini'}
-                                            </span>
-                                            <span className="text-blue-600 transform group-hover:translate-x-1 transition-transform">
-                                                &rarr;
-                                            </span>
-                                        </div>
-                                    </div>
-                                );
-                            })}
+                                    );
+                                })}
+                            </div>
                         </div>
                     </div>
                 </main>
@@ -488,11 +667,21 @@ export default function InformasiAlat({ instruments = [], selectedId = null }) {
                             >
                                 ✕
                             </button>
-                            <img 
-                                src={activeInstrument?.image_path || '/images/panci_penguapan.png'} 
-                                alt={activeInstrument?.name}
-                                className="max-h-[80vh] w-auto rounded-2xl shadow-2xl object-contain border border-white/20"
-                            />
+                            {isVideoMedia(activeInstrument?.image_path) ? (
+                                <video 
+                                    src={activeInstrument?.image_path} 
+                                    controls
+                                    autoPlay
+                                    playsInline
+                                    className="max-h-[80vh] w-auto max-w-full rounded-2xl shadow-2xl object-contain border border-white/20"
+                                />
+                            ) : (
+                                <img 
+                                    src={activeInstrument?.image_path || '/images/panci_penguapan.png'} 
+                                    alt={activeInstrument?.name}
+                                    className="max-h-[80vh] w-auto rounded-2xl shadow-2xl object-contain border border-white/20"
+                                />
+                            )}
                             <div className="text-white text-center mt-3 text-sm font-medium">
                                 {activeInstrument?.name} &bull; Taman Alat BMKG
                             </div>
