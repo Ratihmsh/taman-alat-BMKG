@@ -277,17 +277,10 @@ export default function InformasiAlat({ instruments = [], selectedId = null }) {
                                 </span>
                             </div>
 
-                            <div className="flex flex-wrap items-start justify-between gap-3 mb-6">
+                            <div className="mb-6">
                                 <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight max-w-3xl">
                                     {activeInstrument.name}
                                 </h2>
-
-                                <div className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 border border-blue-200/70 rounded-full px-3.5 py-1.5 text-xs font-semibold shadow-xs">
-                                    <svg className="w-3.5 h-3.5 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                                    </svg>
-                                    <span>Koordinat: {getCoordinateText(activeInstrument)}</span>
-                                </div>
                             </div>
 
                             {/* 2-Column Split: Image Showcase on Left, Description & Fungsi on Right */}

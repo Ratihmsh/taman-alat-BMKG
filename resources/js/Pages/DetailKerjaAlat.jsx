@@ -210,7 +210,7 @@ export default function DetailKerjaAlat({ instrument = null, instruments = [] })
                 <main className="max-w-6xl mx-auto -mt-10 sm:-mt-12 px-4 sm:px-6 relative z-20 w-full pb-16">
                     <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/80 border border-slate-100 p-6 sm:p-8 transition-all">
                         {/* Header Row */}
-                        <div className="flex flex-wrap items-center justify-between gap-3 mb-6 pb-5 border-b border-slate-100">
+                        <div className="mb-6 pb-5 border-b border-slate-100">
                             <div>
                                 <span className="inline-block bg-[#e0f2fe] text-[#0284c7] font-bold text-[11px] sm:text-xs px-3.5 py-1 rounded-full uppercase tracking-wider mb-2">
                                     {getCategoryBadge(activeInstrument)}
@@ -218,15 +218,6 @@ export default function DetailKerjaAlat({ instrument = null, instruments = [] })
                                 <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">
                                     {activeInstrument.name}
                                 </h2>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                                <div className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 border border-blue-200/70 rounded-full px-3.5 py-1.5 text-xs font-semibold shadow-xs">
-                                    <svg className="w-3.5 h-3.5 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                                    </svg>
-                                    <span>Koordinat: {getCoordinateText(activeInstrument)}</span>
-                                </div>
                             </div>
                         </div>
 
