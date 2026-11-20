@@ -48,6 +48,12 @@ export default function Welcome({ contents = {}, instruments = [] }) {
                                     Admin
                                 </Link>
                                 <Link 
+                                    href="/informasi-alat" 
+                                    className="text-gray-600 hover:text-blue-600 font-medium transition-colors"
+                                >
+                                    Informasi Alat
+                                </Link>
+                                <Link 
                                     href="/virtual-tour" 
                                     className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-full font-semibold shadow-md transition-transform hover:scale-105"
                                 >
@@ -254,6 +260,7 @@ export default function Welcome({ contents = {}, instruments = [] }) {
                             <ul className="space-y-2 text-sm">
                                 <li><a href="#beranda" className="hover:text-white transition-colors">Beranda</a></li>
                                 <li><a href="#tentang" className="hover:text-white transition-colors">Tentang Kami</a></li>
+                                <li><Link href="/informasi-alat" className="hover:text-white transition-colors">Informasi Alat</Link></li>
                                 <li><Link href="/virtual-tour" className="hover:text-white transition-colors">Virtual Tour 360</Link></li>
                             </ul>
                         </div>
