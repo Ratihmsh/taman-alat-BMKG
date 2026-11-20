@@ -4,7 +4,7 @@ export default function SimulasiPsychrometerStandar() {
     // 1. Slider Kelembapan Udara Lingkungan (RH 20% - 100%)
     const [rh, setRh] = useState(65); // Default 65%
 
-    // 2. Slider Suhu Bola Kering (Dry Bulb) 20°C - 40°C
+    // 2. Slider Suhu Bola Kering (Dry Bulb) 20Â°C - 40Â°C
     const [dryBulbTemp, setDryBulbTemp] = useState(30.0);
 
     // 3. Status Air pada Bejana Kasa (Ada Air vs Kering)
@@ -96,31 +96,7 @@ export default function SimulasiPsychrometerStandar() {
     );
 
     return (
-        <div className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-7 shadow-sm space-y-6">
-            {/* Header Modul Simulasi */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-slate-150">
-                <div>
-                    <div className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 font-bold text-[11px] px-3 py-1 rounded-full uppercase tracking-wider mb-1.5 border border-blue-200/60">
-                        <span>💧</span> Simulasi Termodinamika & Psikrometri
-                    </div>
-                    <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-                        <span>🌡️</span> Simulasi Cara Kerja Psychrometer Standar
-                    </h3>
-                    <p className="text-xs text-slate-500">
-                        Uji pengaruh laju ventilasi terhadap penguapan kain kasa dan pelajari cara observer BMKG membaca Tabel Psikrometrik Resmi.
-                    </p>
-                </div>
-
-                {/* Status Badges Cepat */}
-                <div className="flex items-center gap-2">
-                    <span className={`text-xs font-bold px-3 py-1 rounded-full border ${rhStatus.bg} ${rhStatus.color} ${rhStatus.border}`}>
-                        RH: {rh}% ({rh >= 80 ? 'Lembap' : rh <= 45 ? 'Kering' : 'Normal'})
-                    </span>
-                    <span className="text-xs font-mono font-bold bg-slate-900 text-sky-400 px-3 py-1 rounded-full border border-slate-700 shadow-2xs">
-                        ΔT: {depression}°C
-                    </span>
-                </div>
-            </div>
+        <div className="space-y-6">
 
             {/* Layout Utama 1 Section Terpadu */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -130,11 +106,11 @@ export default function SimulasiPsychrometerStandar() {
                         {/* Status bar di atas kanvas */}
                         <div className="flex items-center justify-between mb-2 text-xs">
                             <span className="font-bold text-slate-700 flex items-center gap-1.5">
-                                <span className={ventilationLevel > 0 ? 'animate-spin inline-block text-sky-600' : ''}>💨</span>
+                                <span className={ventilationLevel > 0 ? 'animate-spin inline-block text-sky-600' : ''}>ðŸ’¨</span>
                                 <span>Ventilasi: </span>
                             </span>
                             <span className={`text-[11px] font-bold ${hasWater ? 'text-blue-600' : 'text-rose-600 animate-pulse'}`}>
-                                {hasWater ? '💧 Kain Kasa Basah' : '⚠️ Kasa Kering (Error!)'}
+                                {hasWater ? 'ðŸ’§ Kain Kasa Basah' : 'âš ï¸ Kasa Kering (Error!)'}
                             </span>
                         </div>
 
@@ -168,7 +144,7 @@ export default function SimulasiPsychrometerStandar() {
                                         <g key={t}>
                                             <line x1="205" y1={yPos} x2="215" y2={yPos} strokeWidth="1.5" />
                                             <line x1="225" y1={yPos} x2="235" y2={yPos} strokeWidth="1.5" />
-                                            <text x="220" y={yPos + 3} textAnchor="middle" fill="#64748b" fontSize="8" fontWeight="bold">{t}°</text>
+                                            <text x="220" y={yPos + 3} textAnchor="middle" fill="#64748b" fontSize="8" fontWeight="bold">{t}Â°</text>
                                         </g>
                                     );
                                 })}
@@ -194,7 +170,7 @@ export default function SimulasiPsychrometerStandar() {
                                 <circle cx="8" cy="138" r="10" fill="#ef4444" stroke="#b91c1c" strokeWidth="1.5" />
                                 <text x="8" y="-8" textAnchor="middle" fill="#be123c" fontSize="9" fontWeight="extrabold">BOLA KERING</text>
                                 <rect x="-18" y="152" width="52" height="20" rx="5" fill="#fee2e2" stroke="#f87171" strokeWidth="1" />
-                                <text x="8" y="166" textAnchor="middle" fill="#991b1b" fontSize="10" fontWeight="black">{dryBulbTemp.toFixed(1)}°C</text>
+                                <text x="8" y="166" textAnchor="middle" fill="#991b1b" fontSize="10" fontWeight="black">{dryBulbTemp.toFixed(1)}Â°C</text>
                             </g>
 
                             {/* 2. TERMOMETER BOLA BASAH (KANAN) */}
@@ -263,21 +239,21 @@ export default function SimulasiPsychrometerStandar() {
                                         />
                                         <circle cx="24" cy="132" r="3" fill="#38bdf8" className={ventilationLevel === 3 ? 'animate-ping' : 'animate-pulse'} />
                                         <circle cx="36" cy="125" r="2.5" fill="#0284c7" />
-                                        <text x="25" y="120" fill="#0369a1" fontSize="8" fontWeight="extrabold">Kalor Menguap ↗</text>
+                                        <text x="25" y="120" fill="#0369a1" fontSize="8" fontWeight="extrabold">Kalor Menguap â†—</text>
                                     </g>
                                 )}
 
                                 <text x="8" y="-8" textAnchor="middle" fill="#0369a1" fontSize="9" fontWeight="extrabold">BOLA BASAH</text>
                                 <rect x="-18" y="200" width="52" height="20" rx="5" fill="#e0f2fe" stroke="#38bdf8" strokeWidth="1" />
-                                <text x="8" y="214" textAnchor="middle" fill="#0369a1" fontSize="10" fontWeight="black">{animatedWetBulb}°C</text>
+                                <text x="8" y="214" textAnchor="middle" fill="#0369a1" fontSize="10" fontWeight="black">{animatedWetBulb}Â°C</text>
                             </g>
 
-                            {/* Selisih Depresi (ΔT) di Tengah */}
+                            {/* Selisih Depresi (Î”T) di Tengah */}
                             <g transform="translate(205, 120)">
                                 <rect x="-30" y="0" width="90" height="40" rx="8" fill="#f8fafc" stroke="#6366f1" strokeWidth="1.5" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.06))" />
-                                <text x="15" y="15" textAnchor="middle" fill="#4338ca" fontSize="8" fontWeight="bold">DEPRESI (ΔT)</text>
+                                <text x="15" y="15" textAnchor="middle" fill="#4338ca" fontSize="8" fontWeight="bold">DEPRESI (Î”T)</text>
                                 <text x="15" y="30" textAnchor="middle" fill="#4f46e5" fontSize="13" fontWeight="black">
-                                    {depression}°C
+                                    {depression}Â°C
                                 </text>
                             </g>
                         </svg>
@@ -288,7 +264,7 @@ export default function SimulasiPsychrometerStandar() {
                         {/* Sisi Kiri: Slider Pendek Ventilasi */}
                         <div className="flex items-center gap-3 flex-1 min-w-[240px]">
                             <div className="flex items-center gap-1.5 shrink-0">
-                                <span className="text-xs">💨</span>
+                                <span className="text-xs">ðŸ’¨</span>
                                 <span className="text-xs font-bold text-slate-700">Ventilasi:</span>
                                 <span className="text-[11px] font-extrabold text-blue-700 bg-blue-100/70 px-2 py-0.5 rounded-md">
                                     {currentVent.short}
@@ -324,7 +300,7 @@ export default function SimulasiPsychrometerStandar() {
                                     : 'bg-rose-50 text-rose-700 border-rose-200 animate-pulse'
                             }`}
                         >
-                            <span>{hasWater ? '💧 Kain Kasa Basah' : '❌ Kasa Kering'}</span>
+                            <span>{hasWater ? 'ðŸ’§ Kain Kasa Basah' : 'âŒ Kasa Kering'}</span>
                         </button>
                     </div>
                 </div>
@@ -337,7 +313,7 @@ export default function SimulasiPsychrometerStandar() {
                         <div className="space-y-1.5">
                             <div className="flex items-center justify-between">
                                 <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                                    <span>💧</span> Kelembapan Relatif (RH Udara):
+                                    <span>ðŸ’§</span> Kelembapan Relatif (RH Udara):
                                 </span>
                                 <span className="text-base font-black text-sky-400 font-mono">
                                     {rh}%
@@ -364,10 +340,10 @@ export default function SimulasiPsychrometerStandar() {
                         <div className="space-y-1.5 pt-2 border-t border-slate-800">
                             <div className="flex items-center justify-between">
                                 <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                                    <span>🌡️</span> Suhu Lingkungan (Bola Kering):
+                                    <span>ðŸŒ¡ï¸</span> Suhu Lingkungan (Bola Kering):
                                 </span>
                                 <span className="text-sm font-black text-rose-400 font-mono">
-                                    {dryBulbTemp.toFixed(1)}°C
+                                    {dryBulbTemp.toFixed(1)}Â°C
                                 </span>
                             </div>
                             <input
@@ -380,16 +356,16 @@ export default function SimulasiPsychrometerStandar() {
                                 className="w-full h-2.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-rose-500"
                             />
                             <div className="flex justify-between text-[10px] text-slate-400 font-mono">
-                                <span>20.0°C</span>
-                                <span>30.0°C (Standar)</span>
-                                <span>40.0°C</span>
+                                <span>20.0Â°C</span>
+                                <span>30.0Â°C (Standar)</span>
+                                <span>40.0Â°C</span>
                             </div>
                         </div>
 
                         {/* Penjelasan Interaktif Sesuai Slider Ventilasi */}
                         <div className="p-3 bg-slate-800/90 rounded-xl border border-slate-700/80 text-xs leading-relaxed">
                             <p className="text-sky-300 font-semibold mb-1">
-                                💨 Mode Ventilasi: {currentVent.label}
+                                ðŸ’¨ Mode Ventilasi: {currentVent.label}
                             </p>
                             <p className="text-slate-300">
                                 {currentVent.desc}
@@ -405,9 +381,9 @@ export default function SimulasiPsychrometerStandar() {
 
                         <div className="grid grid-cols-2 gap-2 text-xs">
                             <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-2xs">
-                                <span className="text-[10px] text-slate-500 block mb-0.5">Depresi Bola Basah (ΔT)</span>
+                                <span className="text-[10px] text-slate-500 block mb-0.5">Depresi Bola Basah (Î”T)</span>
                                 <span className="text-lg font-black text-indigo-600">
-                                    {depression}°C
+                                    {depression}Â°C
                                 </span>
                                 <span className="text-[9px] text-slate-400 block mt-0.5">(T.Kering - T.Basah)</span>
                             </div>
@@ -415,7 +391,7 @@ export default function SimulasiPsychrometerStandar() {
                             <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-2xs">
                                 <span className="text-[10px] text-slate-500 block mb-0.5">Titik Embun (Dew Point)</span>
                                 <span className="text-lg font-black text-teal-600">
-                                    {dewPoint}°C
+                                    {dewPoint}Â°C
                                 </span>
                                 <span className="text-[9px] text-slate-400 block mt-0.5">Kondensasi uap air</span>
                             </div>
@@ -442,13 +418,13 @@ export default function SimulasiPsychrometerStandar() {
                 <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
                     <div>
                         <div className="inline-flex items-center gap-1.5 bg-indigo-50 text-indigo-700 font-bold text-[10px] px-2.5 py-0.5 rounded-full uppercase tracking-wider mb-1 border border-indigo-200">
-                            <span>📖</span> Buku Saku Observer BMKG
+                            <span>ðŸ“–</span> Buku Saku Observer BMKG
                         </div>
                         <h4 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-                            <span>📊</span> Tabel Matriks Psikrometrik Resmi BMKG / WMO
+                            <span>ðŸ“Š</span> Tabel Matriks Psikrometrik Resmi BMKG / WMO
                         </h4>
                         <p className="text-xs text-slate-500">
-                            Tabel silang ini digunakan observer manual: Tarik garis horizontal dari <strong>Suhu Bola Kering</strong> dan vertikal dari <strong>Depresi (ΔT)</strong> untuk menemukan nilai <strong>Kelembapan Relatif (RH %)</strong>.
+                            Tabel silang ini digunakan observer manual: Tarik garis horizontal dari <strong>Suhu Bola Kering</strong> dan vertikal dari <strong>Depresi (Î”T)</strong> untuk menemukan nilai <strong>Kelembapan Relatif (RH %)</strong>.
                         </p>
                     </div>
 
@@ -456,7 +432,7 @@ export default function SimulasiPsychrometerStandar() {
                     <div className="flex items-center gap-2 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 px-3.5 py-1.5 rounded-xl shadow-2xs">
                         <span className="text-xs text-slate-600 font-medium">Titik Pertemuan:</span>
                         <span className="text-xs font-bold text-blue-900">
-                            {activeRowTemp}°C &times; ΔT {activeColDep}°C
+                            {activeRowTemp}Â°C &times; Î”T {activeColDep}Â°C
                         </span>
                         <span className="text-xs font-black bg-blue-600 text-white px-2 py-0.5 rounded-md shadow-2xs">
                             RH = {getTableRhValue(activeRowTemp, activeColDep)}%
@@ -470,7 +446,7 @@ export default function SimulasiPsychrometerStandar() {
                         <thead>
                             <tr className="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
                                 <th className="p-2.5 text-left text-[11px] font-extrabold text-slate-800 bg-slate-200/60 sticky left-0 z-10 w-36">
-                                    T. Kering \ ΔT
+                                    T. Kering \ Î”T
                                 </th>
                                 {tableColsDepression.map((colDep) => {
                                     const isColActive = colDep === activeColDep;
@@ -483,7 +459,7 @@ export default function SimulasiPsychrometerStandar() {
                                                     : 'text-slate-600 hover:bg-slate-200/50'
                                             }`}
                                         >
-                                            ΔT {colDep}°C
+                                            Î”T {colDep}Â°C
                                         </th>
                                     );
                                 })}
@@ -502,7 +478,7 @@ export default function SimulasiPsychrometerStandar() {
                                                 ? 'bg-blue-600 text-white font-black shadow-xs'
                                                 : 'bg-slate-100 text-slate-700'
                                         }`}>
-                                            {rowTemp}.0°C
+                                            {rowTemp}.0Â°C
                                         </td>
 
                                         {tableColsDepression.map((colDep) => {
@@ -534,7 +510,7 @@ export default function SimulasiPsychrometerStandar() {
 
                 <div className="flex flex-wrap items-center justify-between gap-2 mt-2 text-[11px] text-slate-500 px-1">
                     <span>
-                        💡 <strong>Kotak Kuning Menyala:</strong> Titik temu pembacaan alat Anda saat ini di tabel resmi.
+                        ðŸ’¡ <strong>Kotak Kuning Menyala:</strong> Titik temu pembacaan alat Anda saat ini di tabel resmi.
                     </span>
                     <span>
                         Sumber: <em>WMO Publication No. 8 & Buku Pedoman Pengamatan BMKG</em>

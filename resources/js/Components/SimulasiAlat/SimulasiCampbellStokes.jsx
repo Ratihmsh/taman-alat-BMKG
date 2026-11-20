@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function SimulasiCampbellStokes() {
     // 1. Slider Waktu Penyinaran Matahari (06:00 - 18:00 WIB, desimal)
@@ -140,31 +140,7 @@ export default function SimulasiCampbellStokes() {
     const formattedTime = `${String(hourInt).padStart(2, '0')}:${String(minutesInt).padStart(2, '0')}`;
 
     return (
-        <div className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-7 shadow-sm space-y-6">
-            {/* Header Ringkas Modul Simulasi */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-slate-150">
-                <div>
-                    <div className="inline-flex items-center gap-1.5 bg-amber-50 text-amber-800 font-bold text-[11px] px-3 py-1 rounded-full uppercase tracking-wider mb-1.5 border border-amber-200/60">
-                        <span>☀️</span> Penyinaran Matahari & Optika Meteorologi
-                    </div>
-                    <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-                        <span>🔍</span> Simulasi Campbell Stokes (Lama Penyinaran)
-                    </h3>
-                    <p className="text-xs text-slate-500">
-                        Fisika titik api lensa bola kaca pejal, koreksi Waktu Matahari Sejati (LAT), 3 varian pias, dan analisis jejak WMO No. 8.
-                    </p>
-                </div>
-
-                {/* Status Ringkas Header */}
-                <div className="flex items-center gap-2">
-                    <span className={`text-xs font-bold px-3 py-1 rounded-full border ${isBurningActive ? 'bg-amber-100 text-amber-800 border-amber-300' : 'bg-slate-100 text-slate-600 border-slate-300'}`}>
-                        {cardWetness === 'wet' ? '🌧️ Hujan (Kertas Basah)' : cardWetness === 'drying' ? '💨 Evaporasi Air Pias...' : isBurningActive ? '🔥 Titik Api Aktif (Membakar)' : '⚪ Tidak Membakar (<120 W/m²)'}
-                    </span>
-                    <span className="text-xs font-mono font-bold bg-slate-900 text-amber-400 px-3 py-1 rounded-full border border-slate-700 shadow-2xs">
-                        LPM: {totalEffectiveBurned} Jam ({lpmPercentage}%)
-                    </span>
-                </div>
-            </div>
+        <div className="space-y-6">
 
             {/* Layout Utama Asimetris: 60% Visual Optik (7 Kolom) vs 40% Kontrol Pias & Kalkulator (5 Kolom) */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -174,23 +150,23 @@ export default function SimulasiCampbellStokes() {
                         {/* Status Bar Kecil di Atas Kanvas */}
                         <div className="flex items-center justify-between mb-2 text-xs">
                             <span className="font-bold text-slate-700 flex items-center gap-1.5">
-                                <span>{isCloudCovered ? '☁️' : '☀️'}</span>
-                                <span>Radiasi: <strong>{Math.round(currentRad)} W/m²</strong> {currentRad >= 120 ? '(≥120 W/m² WMO)' : '(<120 W/m²)'}</span>
+                                <span>{isCloudCovered ? '??' : '??'}</span>
+                                <span>Radiasi: <strong>{Math.round(currentRad)} W/m²</strong> {currentRad >= 120 ? '(=120 W/m² WMO)' : '(<120 W/m²)'}</span>
                             </span>
                             <span className={`text-[11px] font-bold ${cardStatus.valid && isAlignedNorthSouth && !hasMorningDew && isLATCorrected && cardWetness === 'dry' ? 'text-emerald-600' : 'text-rose-600 animate-pulse'}`}>
                                 {!isLATCorrected 
-                                    ? '⚠️ Jam Pias Belum Dikoreksi ke LAT!' 
+                                    ? '?? Jam Pias Belum Dikoreksi ke LAT!' 
                                     : cardWetness === 'wet'
-                                    ? '🌧️ Kertas Basah Kuyup!'
+                                    ? '??? Kertas Basah Kuyup!'
                                     : cardWetness === 'drying'
-                                    ? '💨 Menguapkan Air (Belum Nyala)'
+                                    ? '?? Menguapkan Air (Belum Nyala)'
                                     : !cardStatus.valid 
-                                    ? '⚠️ Pias Salah Pasang!' 
+                                    ? '?? Pias Salah Pasang!' 
                                     : !isAlignedNorthSouth 
-                                    ? '⚠️ Poros U-S Melenceng!' 
+                                    ? '?? Poros U-S Melenceng!' 
                                     : hasMorningDew 
-                                    ? '⚠️ Kaca Berembun!' 
-                                    : '✅ Fokus Tepat di Garis Pias'}
+                                    ? '?? Kaca Berembun!' 
+                                    : '? Fokus Tepat di Garis Pias'}
                             </span>
                         </div>
 
@@ -233,7 +209,7 @@ export default function SimulasiCampbellStokes() {
 
                                         <circle cx={sunX} cy={sunY} r="18" fill="#fbbf24" filter="drop-shadow(0 0 8px rgba(245,158,11,0.6))" />
                                         <circle cx={sunX} cy={sunY} r="12" fill="#f59e0b" />
-                                        <text x={sunX} y={sunY + 4} textAnchor="middle" fill="#78350f" fontSize="8" fontWeight="black">☀️</text>
+                                        <text x={sunX} y={sunY + 4} textAnchor="middle" fill="#78350f" fontSize="8" fontWeight="black">??</text>
 
                                         {isCloudCovered && (
                                             <g transform={`translate(${sunX - 30}, ${sunY - 10})`}>
@@ -306,7 +282,7 @@ export default function SimulasiCampbellStokes() {
                                 {/* Indikator Kertas Basah Mengkilap */}
                                 {cardWetness === 'wet' && (
                                     <text x="0" y="70" textAnchor="middle" fill="#38bdf8" fontSize="7" fontWeight="bold">
-                                        💧 KERTAS PIAS BASAH KUYUP
+                                        ?? KERTAS PIAS BASAH KUYUP
                                     </text>
                                 )}
 
@@ -419,7 +395,7 @@ export default function SimulasiCampbellStokes() {
                                         className="animate-pulse"
                                         opacity="0.8"
                                     />
-                                    <text x="0" y="-12" textAnchor="middle" fill="#78350f" fontSize="6" fontWeight="black">🔥</text>
+                                    <text x="0" y="-12" textAnchor="middle" fill="#78350f" fontSize="6" fontWeight="black">??</text>
                                 </g>
                             )}
 
@@ -436,7 +412,7 @@ export default function SimulasiCampbellStokes() {
                                         strokeLinecap="round"
                                         className="animate-pulse"
                                     />
-                                    <text x="0" y="-14" textAnchor="middle" fill="#0284c7" fontSize="6" fontWeight="bold">💨 Uap Air</text>
+                                    <text x="0" y="-14" textAnchor="middle" fill="#0284c7" fontSize="6" fontWeight="bold">?? Uap Air</text>
                                 </g>
                             )}
                         </svg>
@@ -445,7 +421,7 @@ export default function SimulasiCampbellStokes() {
                         <div className="mt-3 p-3 bg-slate-900/95 backdrop-blur-md text-white rounded-xl border border-slate-700/80 space-y-2">
                             <div className="flex items-center justify-between text-xs">
                                 <span className="text-slate-300 font-semibold flex items-center gap-1.5">
-                                    <span>🕒</span> Lintasan Waktu Matahari:
+                                    <span>??</span> Lintasan Waktu Matahari:
                                 </span>
                                 <span className="font-mono font-black text-amber-400">
                                     Pukul {formattedTime} WIB {isLATCorrected ? '(LAT Selaras)' : '(LAT Melenceng!)'}
@@ -484,7 +460,7 @@ export default function SimulasiCampbellStokes() {
                                     : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
                             }`}
                         >
-                            <span>{cardWetness === 'wet' ? '🌧️ Hujan (Basah)' : cardWetness === 'drying' ? '💨 Mengeringkan...' : '☀️ Kertas Kering'}</span>
+                            <span>{cardWetness === 'wet' ? '??? Hujan (Basah)' : cardWetness === 'drying' ? '?? Mengeringkan...' : '?? Kertas Kering'}</span>
                         </button>
 
                         {/* 2. Tombol Lap Embun Pagi */}
@@ -496,7 +472,7 @@ export default function SimulasiCampbellStokes() {
                                     : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
                             }`}
                         >
-                            <span>{hasMorningDew ? '🧽 Lap Kaca Buram!' : '✨ Kaca Bening'}</span>
+                            <span>{hasMorningDew ? '?? Lap Kaca Buram!' : '? Kaca Bening'}</span>
                         </button>
 
                         {/* 3. Kalibrasi Poros Utara-Selatan */}
@@ -508,7 +484,7 @@ export default function SimulasiCampbellStokes() {
                                     : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
                             }`}
                         >
-                            <span>{!isAlignedNorthSouth ? '🧭 Luruskan U-S!' : '✅ Poros U-S'}</span>
+                            <span>{!isAlignedNorthSouth ? '?? Luruskan U-S!' : '? Poros U-S'}</span>
                         </button>
 
                         {/* 4. Kalibrasi LAT (Local Apparent Time) */}
@@ -520,13 +496,13 @@ export default function SimulasiCampbellStokes() {
                                     : 'bg-white text-purple-700 border-purple-200 hover:bg-purple-50'
                             }`}
                         >
-                            <span>{!isLATCorrected ? '⚙️ Koreksi LAT!' : '📐 LAT Selaras'}</span>
+                            <span>{!isLATCorrected ? '?? Koreksi LAT!' : '?? LAT Selaras'}</span>
                         </button>
                     </div>
 
                     {/* EDUKASI PENTINGNYA KOREKSI WAKTU MATAHARI SEJATI (LAT) */}
                     <div className="p-3 bg-purple-50/80 rounded-xl border border-purple-200/70 text-[11px] text-purple-900 leading-relaxed flex items-start gap-2">
-                        <span className="text-sm shrink-0">📐</span>
+                        <span className="text-sm shrink-0">??</span>
                         <div>
                             <strong>Waktu Matahari Sejati (Local Apparent Time / LAT):</strong> Garis jam 12:00 di pias Campbell Stokes harus jatuh tepat di titik kulminasi matahari tertinggi di stasiun lokal (bukan jam 12:00 WIB jam dinding). Selisih bujur Sidoarjo (112.7° BT) dengan meridian pusat WIB (105° BT) adalah ~31 menit lebih cepat!
                         </div>
@@ -539,10 +515,10 @@ export default function SimulasiCampbellStokes() {
                     <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 space-y-3.5 shadow-2xs">
                         <div className="flex items-center justify-between">
                             <span className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-                                <span>📅</span> Musim & 3 Varian Kertas Pias BMKG
+                                <span>??</span> Musim & 3 Varian Kertas Pias BMKG
                             </span>
                             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${cardStatus.valid ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200 animate-pulse'}`}>
-                                {cardStatus.valid ? '✅ Pias Sesuai' : '❌ Salah Pias'}
+                                {cardStatus.valid ? '? Pias Sesuai' : '? Salah Pias'}
                             </span>
                         </div>
 
@@ -598,7 +574,7 @@ export default function SimulasiCampbellStokes() {
                                             : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                                     }`}
                                 >
-                                    ➖ Pias Lurus
+                                    ? Pias Lurus
                                     <span className="block text-[9px] font-normal opacity-80">Alur Tengah</span>
                                 </button>
                                 <button
@@ -609,7 +585,7 @@ export default function SimulasiCampbellStokes() {
                                             : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                                     }`}
                                 >
-                                    🌙 Lengkung Pjg
+                                    ?? Lengkung Pjg
                                     <span className="block text-[9px] font-normal opacity-80">Alur Bawah</span>
                                 </button>
                                 <button
@@ -620,7 +596,7 @@ export default function SimulasiCampbellStokes() {
                                             : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                                     }`}
                                 >
-                                    🌒 Lengkung Pdk
+                                    ?? Lengkung Pdk
                                     <span className="block text-[9px] font-normal opacity-80">Alur Atas</span>
                                 </button>
                             </div>
@@ -635,7 +611,7 @@ export default function SimulasiCampbellStokes() {
                     <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 sm:p-5 space-y-4 shadow-xs">
                         <div className="flex items-center justify-between">
                             <span className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-                                <span>📊</span> Analisis Kertas Pias (LPM BMKG)
+                                <span>??</span> Analisis Kertas Pias (LPM BMKG)
                             </span>
                             <span className="text-[10px] bg-blue-100 text-blue-800 font-extrabold px-2 py-0.5 rounded-full border border-blue-200">
                                 Standar 08.00 - 16.00
@@ -670,7 +646,7 @@ export default function SimulasiCampbellStokes() {
                         {/* ATURAN REDUKSI JEJAK WMO GUIDE NO. 8 */}
                         <div className="p-3 bg-white rounded-xl border border-slate-200 space-y-1.5 text-xs">
                             <span className="text-[10.5px] font-bold text-slate-900 uppercase tracking-wider block">
-                                📏 Panduan Ketelitian Pembacaan WMO No. 8:
+                                ?? Panduan Ketelitian Pembacaan WMO No. 8:
                             </span>
                             <ul className="text-[10.5px] text-slate-600 space-y-1 list-disc list-inside leading-snug">
                                 <li><strong>Lubang Hitam Tembus:</strong> Terik penuh tanpa awan, dihitung 100% panjang garis.</li>

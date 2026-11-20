@@ -8,7 +8,7 @@ export default function SimulasiAnemometer() {
     // Range 0 - 55 knot (Skala Beaufort 0 s/d 10+)
     const [windSpeedKnot, setWindSpeedKnot] = useState(14); // Default 14 knot (Beaufort 4)
 
-    // 2. Arah Datangnya Angin (Derajat Azimuth 0 - 360°)
+    // 2. Arah Datangnya Angin (Derajat Azimuth 0 - 360Â°)
     const [windDirectionDeg, setWindDirectionDeg] = useState(315); // Default Barat Laut (NW)
 
     // 3. Efek Kekasaran Permukaan Tanah (Surface Roughness)
@@ -82,31 +82,7 @@ export default function SimulasiAnemometer() {
     };
 
     return (
-        <div className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-7 shadow-sm space-y-6">
-            {/* Header Ringkas Modul Simulasi */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-slate-150">
-                <div>
-                    <div className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-800 font-bold text-[11px] px-3 py-1 rounded-full uppercase tracking-wider mb-1.5 border border-blue-200/60">
-                        <span>💨</span> Dinamika Atmosfer & Pengukuran Angin
-                    </div>
-                    <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-                        <span>🌀</span> Simulasi Anemometer (Sistem Manual & Otomatis)
-                    </h3>
-                    <p className="text-xs text-slate-500">
-                        Diorama lanskap Skala Beaufort, profil 3 tiang ketinggian BMKG, dan perbandingan dua era teknologi pengamatan angin.
-                    </p>
-                </div>
-
-                {/* Status Ringkas Header */}
-                <div className="flex items-center gap-2">
-                    <span className={`text-xs font-bold px-3 py-1 rounded-full border ${beaufort.bg} ${beaufort.color} border-current/20`}>
-                        Beaufort {beaufort.scale}: {beaufort.name}
-                    </span>
-                    <span className="text-xs font-mono font-bold bg-slate-900 text-cyan-400 px-3 py-1 rounded-full border border-slate-700 shadow-2xs">
-                        {speed10m} Knot ({speedKmh} km/j)
-                    </span>
-                </div>
-            </div>
+        <div className="space-y-6">
 
             {/* Layout Utama: 60% Diorama Panorama (7 Kolom) vs 40% Panel Tab Era Teknologi (5 Kolom) */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -116,11 +92,11 @@ export default function SimulasiAnemometer() {
                         {/* Status Bar Kecil di Atas Kanvas */}
                         <div className="flex items-center justify-between mb-2 text-xs">
                             <span className="font-bold text-slate-700 flex items-center gap-1.5">
-                                <span>🧭</span>
-                                <span>Arah Datang Angin: <strong>{dirData.label} ({windDirectionDeg}°)</strong></span>
+                                <span>ðŸ§­</span>
+                                <span>Arah Datang Angin: <strong>{dirData.label} ({windDirectionDeg}Â°)</strong></span>
                             </span>
                             <span className={`text-[11px] font-bold ${isGustActive ? 'text-rose-600 animate-pulse' : 'text-slate-600'}`}>
-                                {isGustActive ? '🌪️ PERINGATAN GUST (HEMBUSAN MENDADAK)!' : 'Angin Bertiup Stabil'}
+                                {isGustActive ? 'ðŸŒªï¸ PERINGATAN GUST (HEMBUSAN MENDADAK)!' : 'Angin Bertiup Stabil'}
                             </span>
                         </div>
 
@@ -301,7 +277,7 @@ export default function SimulasiAnemometer() {
                         <div className="mt-3 p-3 bg-slate-900/95 backdrop-blur-md text-white rounded-xl border border-slate-700/80 space-y-2.5">
                             <div className="flex items-center justify-between text-xs">
                                 <span className="text-slate-300 font-semibold flex items-center gap-1.5">
-                                    <span>🎚️</span> Slider Kecepatan Angin (Tiang 10m):
+                                    <span>ðŸŽšï¸</span> Slider Kecepatan Angin (Tiang 10m):
                                 </span>
                                 <span className="font-mono font-black text-cyan-400">
                                     {speed10m} Knot ({speedKmh} km/jam)
@@ -324,7 +300,7 @@ export default function SimulasiAnemometer() {
                                     onClick={() => setSurfaceType(surfaceType === 'grass' ? 'rough' : 'grass')}
                                     className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 font-bold transition-all cursor-pointer flex items-center gap-1.5"
                                 >
-                                    <span>{surfaceType === 'grass' ? '🌱 Rumput Pendek (Taman Alat)' : '🏢 Rintangan Bangunan / Semak'}</span>
+                                    <span>{surfaceType === 'grass' ? 'ðŸŒ± Rumput Pendek (Taman Alat)' : 'ðŸ¢ Rintangan Bangunan / Semak'}</span>
                                 </button>
 
                                 {/* Tombol Pemicu Wind Gust */}
@@ -336,7 +312,7 @@ export default function SimulasiAnemometer() {
                                             : 'bg-slate-800 text-rose-400 border-rose-500/50 hover:bg-rose-950/40'
                                     }`}
                                 >
-                                    <span>{isGustActive ? '🌪️ Gust Aktif (+18 Kt)!' : '⚡ Pemicu Wind Gust'}</span>
+                                    <span>{isGustActive ? 'ðŸŒªï¸ Gust Aktif (+18 Kt)!' : 'âš¡ Pemicu Wind Gust'}</span>
                                 </button>
                             </div>
                         </div>
@@ -344,7 +320,7 @@ export default function SimulasiAnemometer() {
 
                     {/* EDUKASI PROFIL ANGIN (LAPISAN BATAS) */}
                     <div className="p-3 bg-blue-50/80 rounded-xl border border-blue-200/70 text-[11px] text-blue-900 leading-relaxed flex items-start gap-2">
-                        <span className="text-sm shrink-0">💡</span>
+                        <span className="text-sm shrink-0">ðŸ’¡</span>
                         <div>
                             <strong>Mengapa Ada 3 Ketinggian Tiang?</strong> Tiang <strong>0.5m</strong> untuk mengukur laju evaporasi panci terbuka, tiang <strong>2m</strong> untuk zona tanaman agroklimat, dan tiang <strong>10m</strong> adalah standar WMO internasional agar pembacaan angin terbebas dari hambatan gesekan permukaan tanah.
                         </div>
@@ -363,7 +339,7 @@ export default function SimulasiAnemometer() {
                                     : 'text-slate-500 hover:text-slate-800'
                             }`}
                         >
-                            <span>⚙️</span>
+                            <span>âš™ï¸</span>
                             <span>Klimatologi Manual</span>
                         </button>
 
@@ -375,7 +351,7 @@ export default function SimulasiAnemometer() {
                                     : 'text-slate-500 hover:text-slate-800'
                             }`}
                         >
-                            <span>📡</span>
+                            <span>ðŸ“¡</span>
                             <span>Telemetri AWS</span>
                         </button>
                     </div>
@@ -387,7 +363,7 @@ export default function SimulasiAnemometer() {
                             <div className="bg-slate-900 text-white rounded-2xl p-4 sm:p-5 border border-slate-800 space-y-3.5 shadow-xs">
                                 <div className="flex items-center justify-between">
                                     <span className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
-                                        <span>📟</span> Odometer Cup Counter (Tiang 0.5m)
+                                        <span>ðŸ“Ÿ</span> Odometer Cup Counter (Tiang 0.5m)
                                     </span>
                                     <span className="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full border border-amber-500/40">
                                         Mekanik Murni (Tanpa Listrik)
@@ -413,7 +389,7 @@ export default function SimulasiAnemometer() {
 
                                 {/* Penjelasan Miskonsepsi Angin Manual */}
                                 <p className="text-[11px] text-slate-300 leading-relaxed bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/80">
-                                    💡 <strong>Miskonsepsi Umum:</strong> Alat manual tidak membaca kecepatan instan (km/jam), melainkan mencatat akumulasi <strong>jarak tempuh angin (*wind run*)</strong> selama 24 jam penuh!
+                                    ðŸ’¡ <strong>Miskonsepsi Umum:</strong> Alat manual tidak membaca kecepatan instan (km/jam), melainkan mencatat akumulasi <strong>jarak tempuh angin (*wind run*)</strong> selama 24 jam penuh!
                                 </p>
                             </div>
 
@@ -425,7 +401,7 @@ export default function SimulasiAnemometer() {
 
                                 <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-2xs space-y-2 text-xs">
                                     <div className="flex justify-between text-slate-600">
-                                        <span>Total Jarak Angin (Δ km):</span>
+                                        <span>Total Jarak Angin (Î” km):</span>
                                         <span className="font-bold text-slate-900 font-mono">{windRun24hKm} km</span>
                                     </div>
                                     <div className="flex justify-between text-slate-600">
@@ -449,14 +425,14 @@ export default function SimulasiAnemometer() {
                     {/* ISI TAB 2: TELEMETRI OTOMATIS (AWS / WIND VANE & ULTRASONIK) */}
                     {activeTab === 'otomatis' && (
                         <div className="space-y-4">
-                            {/* Kartu Compass Wind Rose 360° */}
+                            {/* Kartu Compass Wind Rose 360Â° */}
                             <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 space-y-3.5 shadow-2xs">
                                 <div className="flex items-center justify-between">
                                     <span className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-                                        <span>🧭</span> Mawar Angin (Compass Rose 360°)
+                                        <span>ðŸ§­</span> Mawar Angin (Compass Rose 360Â°)
                                     </span>
                                     <span className="text-xs font-mono font-bold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-lg border border-blue-200">
-                                        {dirData.abbr} - {windDirectionDeg}°
+                                        {dirData.abbr} - {windDirectionDeg}Â°
                                     </span>
                                 </div>
 
@@ -495,7 +471,7 @@ export default function SimulasiAnemometer() {
                             <div className="bg-slate-900 text-white rounded-2xl p-4 space-y-3 border border-slate-800 shadow-xs">
                                 <div className="flex items-center justify-between">
                                     <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
-                                        <span>📡</span> Data Logger AWS BMKG (Tiang 10m)
+                                        <span>ðŸ“¡</span> Data Logger AWS BMKG (Tiang 10m)
                                     </span>
                                     <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-500/40">
                                         Real-Time Telemetri

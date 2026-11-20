@@ -106,31 +106,7 @@ export default function SimulasiOmbrometer() {
         : Number((waterInGlassMm + (eyeLevelOffset * 0.2)).toFixed(1));
 
     return (
-        <div className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-7 shadow-sm space-y-6">
-            {/* Header Ringkas Modul Simulasi */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-slate-150">
-                <div>
-                    <div className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-800 font-bold text-[11px] px-3 py-1 rounded-full uppercase tracking-wider mb-1.5 border border-blue-200/60">
-                        <span>🌧️</span> Curah Hujan Manual (Ground Truth Standard)
-                    </div>
-                    <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-                        <span>🪣</span> Simulasi Penakar Hujan Manual (Ombrometer OBS)
-                    </h3>
-                    <p className="text-xs text-slate-500">
-                        Standar validasi mutlak BMKG: disiplin waktu 07:00 WIB, penuangan bertahap (&gt;25 mm), presisi meniskus, dan SOP tetesan terakhir.
-                    </p>
-                </div>
-
-                {/* Status Ringkas Header */}
-                <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold px-3 py-1 rounded-full border bg-blue-50 text-blue-700 border-blue-200">
-                        Waktu: {observationTime} WIB {observationTime === '07:00' ? '(Tepat Waktu)' : '(Telat / Evaporasi)'}
-                    </span>
-                    <span className="text-xs font-mono font-bold bg-slate-900 text-cyan-400 px-3 py-1 rounded-full border border-slate-700 shadow-2xs">
-                        {rainScenario === 'trace' ? 'Hasil: TT (Trace)' : `Total: ${totalAccumulatedMm} mm`}
-                    </span>
-                </div>
-            </div>
+        <div className="space-y-6">
 
             {/* Layout Utama Asimetris: 60% Visual Kaleng OBS & Gelas Ukur (7 Kolom) vs 40% Kontrol & Analisis (5 Kolom) */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -140,19 +116,19 @@ export default function SimulasiOmbrometer() {
                         {/* Status Bar Kecil di Atas Kanvas */}
                         <div className="flex items-center justify-between mb-2 text-xs">
                             <span className="font-bold text-slate-700 flex items-center gap-1.5">
-                                <span>💧</span>
+                                <span>ðŸ’§</span>
                                 <span>Status Kran: <strong>{isTapOpen ? 'Air Mengucur ke Gelas Ukur...' : waterInGlassMm > 0 ? 'Air Tertampung di Gelas Ukur' : 'Kran Tertutup'}</strong></span>
                             </span>
                             <span className={`text-[11px] font-bold ${isStrainerClogged ? 'text-rose-600 animate-pulse' : isTapLeaking ? 'text-amber-600 animate-pulse' : isMeniscusAligned ? 'text-emerald-600' : 'text-amber-600 animate-pulse'}`}>
                                 {isStrainerClogged 
-                                    ? '⚠️ Saringan Tersumbat! Air Menggenang di Corong' 
+                                    ? 'âš ï¸ Saringan Tersumbat! Air Menggenang di Corong' 
                                     : isTapLeaking
-                                    ? '⚠️ Kran Bocor! Air Menetes ke Tanah (-7.0mm)'
+                                    ? 'âš ï¸ Kran Bocor! Air Menetes ke Tanah (-7.0mm)'
                                     : isMeniscusAligned 
-                                    ? '🎯 Sudut Mata Tepat Sejajar Meniskus Bawah!' 
+                                    ? 'ðŸŽ¯ Sudut Mata Tepat Sejajar Meniskus Bawah!' 
                                     : eyeLevelOffset > 1 
-                                    ? '⚠️ Pandangan Terlalu Tinggi (Paralaks Atas)' 
-                                    : '⚠️ Pandangan Terlalu Rendah (Paralaks Bawah)'}
+                                    ? 'âš ï¸ Pandangan Terlalu Tinggi (Paralaks Atas)' 
+                                    : 'âš ï¸ Pandangan Terlalu Rendah (Paralaks Bawah)'}
                             </span>
                         </div>
 
@@ -181,7 +157,7 @@ export default function SimulasiOmbrometer() {
                                     <circle cx="0" cy="0" r="45" fill="#15803d" />
                                     <circle cx="-20" cy="-10" r="35" fill="#166534" />
                                     <circle cx="20" cy="-5" r="38" fill="#14532d" />
-                                    <text x="0" y="4" textAnchor="middle" fill="#fef08a" fontSize="7" fontWeight="black">⚠️ DI BAWAH POHON!</text>
+                                    <text x="0" y="4" textAnchor="middle" fill="#fef08a" fontSize="7" fontWeight="black">âš ï¸ DI BAWAH POHON!</text>
                                     <text x="0" y="14" textAnchor="middle" fill="#ffffff" fontSize="6">(Tetesan Daun Tidak Alami)</text>
                                 </g>
                             )}
@@ -198,7 +174,7 @@ export default function SimulasiOmbrometer() {
                                     <g transform="translate(130, 0)">
                                         <rect x="-14" y={poleTopY} width="28" height={poleHeight} fill="#78350f" stroke="#451a03" strokeWidth="2" rx="2" />
                                         <text x="0" y={270} textAnchor="middle" fill="#ffffff" fontSize="7" fontWeight="bold">
-                                            {isHeight120cm ? 'Tinggi 120 cm (Standar BMKG)' : '⚠️ Terlalu Pendek (50 cm)'}
+                                            {isHeight120cm ? 'Tinggi 120 cm (Standar BMKG)' : 'âš ï¸ Terlalu Pendek (50 cm)'}
                                         </text>
                                     </g>
                                 );
@@ -215,7 +191,7 @@ export default function SimulasiOmbrometer() {
                                     >
                                         <rect x="-35" y="-95" width="70" height="95" fill="url(#galvanizedGrad)" stroke="#334155" strokeWidth="2" rx="3" />
                                         
-                                        {/* CORONG PENANGKAP ATAS (LUAS 100 CM², DIAMETER 11.3 CM) */}
+                                        {/* CORONG PENANGKAP ATAS (LUAS 100 CMÂ², DIAMETER 11.3 CM) */}
                                         <path
                                             d="M -36 -95 L 36 -95 L 8 -55 L -8 -55 Z"
                                             fill="#475569"
@@ -224,7 +200,7 @@ export default function SimulasiOmbrometer() {
                                         />
                                         <line x1="-36" y1="-95" x2="36" y2="-95" stroke="#ffffff" strokeWidth="2" />
                                         <text x="0" y="-100" textAnchor="middle" fill="#0f172a" fontSize="7" fontWeight="black">
-                                            MULUT CORONG 100 CM²
+                                            MULUT CORONG 100 CMÂ²
                                         </text>
 
                                         {/* GENANGAN AIR JIKA SARINGAN TERSUMBAT DAUN */}
@@ -355,7 +331,7 @@ export default function SimulasiOmbrometer() {
                                             : 'bg-cyan-600 hover:bg-cyan-500 text-white border-cyan-500 shadow-2xs'
                                     }`}
                                 >
-                                    <span>🚰 Buka Kran (Isi Gelas)</span>
+                                    <span>ðŸš° Buka Kran (Isi Gelas)</span>
                                 </button>
 
                                 {/* FITUR BARU 4: KETUK TETESAN TERAKHIR */}
@@ -364,7 +340,7 @@ export default function SimulasiOmbrometer() {
                                         onClick={handleTapLastDrop}
                                         className="px-2.5 py-1.5 rounded-lg font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 border border-amber-300 shadow-2xs animate-pulse flex items-center gap-1 cursor-pointer"
                                     >
-                                        <span>👆 Ketuk Tetesan Terakhir (+0.1mm)</span>
+                                        <span>ðŸ‘† Ketuk Tetesan Terakhir (+0.1mm)</span>
                                     </button>
                                 )}
 
@@ -377,7 +353,7 @@ export default function SimulasiOmbrometer() {
                                             : 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-500 shadow-2xs'
                                     }`}
                                 >
-                                    <span>📝 Catat & Buang ({waterInGlassMm} mm)</span>
+                                    <span>ðŸ“ Catat & Buang ({waterInGlassMm} mm)</span>
                                 </button>
                             </div>
 
@@ -398,7 +374,7 @@ export default function SimulasiOmbrometer() {
                                     : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
                             }`}
                         >
-                            <span>{isStrainerClogged ? '🧹 Bersihkan Saringan!' : '🍂 Sumbat Saringan'}</span>
+                            <span>{isStrainerClogged ? 'ðŸ§¹ Bersihkan Saringan!' : 'ðŸ‚ Sumbat Saringan'}</span>
                         </button>
 
                         {/* 2. Toggle Kran Bocor */}
@@ -410,7 +386,7 @@ export default function SimulasiOmbrometer() {
                                     : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
                             }`}
                         >
-                            <span>{isTapLeaking ? '🔧 Ganti Seal Kran!' : '✅ Kran Rapat'}</span>
+                            <span>{isTapLeaking ? 'ðŸ”§ Ganti Seal Kran!' : 'âœ… Kran Rapat'}</span>
                         </button>
 
                         {/* 3. Toggle Ketinggian 120 cm */}
@@ -422,7 +398,7 @@ export default function SimulasiOmbrometer() {
                                     : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
                             }`}
                         >
-                            <span>{!isHeight120cm ? '📏 Naikkan 120 cm' : '✅ Tinggi 120cm'}</span>
+                            <span>{!isHeight120cm ? 'ðŸ“ Naikkan 120 cm' : 'âœ… Tinggi 120cm'}</span>
                         </button>
 
                         {/* 4. Toggle Bebas Pohon */}
@@ -434,15 +410,15 @@ export default function SimulasiOmbrometer() {
                                     : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
                             }`}
                         >
-                            <span>{!isObstacleFree ? '🌳 Hindari Pohon' : '✅ Area Terbuka'}</span>
+                            <span>{!isObstacleFree ? 'ðŸŒ³ Hindari Pohon' : 'âœ… Area Terbuka'}</span>
                         </button>
                     </div>
 
                     {/* EDUKASI KHUSUS GELAS UKUR OBS VS GELAS KIMIA ML */}
                     <div className="p-3 bg-amber-50/80 rounded-xl border border-amber-200/70 text-[11px] text-amber-950 leading-relaxed flex items-start gap-2">
-                        <span className="text-sm shrink-0">⚠️</span>
+                        <span className="text-sm shrink-0">âš ï¸</span>
                         <div>
-                            <strong>Edukasi Gelas Ukur Khusus OBS vs Gelas Kimia (ml):</strong> Skala gelas ukur OBS sudah dikalibrasi langsung ke satuan <strong>milimeter (mm)</strong> untuk luas corong 100 cm². Setiap <strong>10 ml air = 1 mm curah hujan</strong>. Dilarang mengganti gelas ukur OBS dengan gelas kimia laboratorium biasa yang berskala ml, karena pembacaan akan menjadi sangat kasar dan tidak valid!
+                            <strong>Edukasi Gelas Ukur Khusus OBS vs Gelas Kimia (ml):</strong> Skala gelas ukur OBS sudah dikalibrasi langsung ke satuan <strong>milimeter (mm)</strong> untuk luas corong 100 cmÂ². Setiap <strong>10 ml air = 1 mm curah hujan</strong>. Dilarang mengganti gelas ukur OBS dengan gelas kimia laboratorium biasa yang berskala ml, karena pembacaan akan menjadi sangat kasar dan tidak valid!
                         </div>
                     </div>
                 </div>
@@ -453,7 +429,7 @@ export default function SimulasiOmbrometer() {
                     <div className="bg-slate-900 text-white rounded-2xl p-4 sm:p-5 border border-slate-800 space-y-3.5 shadow-xs">
                         <div className="flex items-center justify-between">
                             <span className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
-                                <span>⏰</span> Golden Hour SOP: Pukul 07:00 WIB
+                                <span>â°</span> Golden Hour SOP: Pukul 07:00 WIB
                             </span>
                             <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold border ${observationTime === '07:00' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-rose-500/20 text-rose-300 border-rose-500/40 animate-pulse'}`}>
                                 {observationTime === '07:00' ? 'Tepat Waktu (Valid)' : 'Telat (Underestimate)'}
@@ -527,7 +503,7 @@ export default function SimulasiOmbrometer() {
                         {/* Penjelasan Ilmiah Evaporasi / Kebocoran */}
                         {(observationTime === '11:00' || isTapLeaking) && (
                             <p className="text-[10.5px] text-amber-300 bg-amber-950/60 p-2.5 rounded-xl border border-amber-800/80 leading-relaxed">
-                                ⚠️ <strong>Faktor Pengurangan:</strong> {observationTime === '11:00' ? "Air menguap akibat panas siang (-2.8 mm). " : ""}{isTapLeaking ? "Kran bocor meneteskan air ke tanah (-7.0 mm)." : ""}
+                                âš ï¸ <strong>Faktor Pengurangan:</strong> {observationTime === '11:00' ? "Air menguap akibat panas siang (-2.8 mm). " : ""}{isTapLeaking ? "Kran bocor meneteskan air ke tanah (-7.0 mm)." : ""}
                             </p>
                         )}
                     </div>
@@ -536,7 +512,7 @@ export default function SimulasiOmbrometer() {
                     <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 space-y-3 shadow-2xs">
                         <div className="flex items-center justify-between">
                             <span className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-                                <span>👁️</span> Posisi Sudut Pandang Mata (Eye-Level)
+                                <span>ðŸ‘ï¸</span> Posisi Sudut Pandang Mata (Eye-Level)
                             </span>
                             <span className={`text-[11px] font-mono font-bold px-2 py-0.5 rounded-md border ${isMeniscusAligned ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'}`}>
                                 Terbaca: {waterInGlassMm > 0 ? `${apparentReading} mm` : '0.0 mm'}
@@ -563,8 +539,8 @@ export default function SimulasiOmbrometer() {
 
                         <p className="text-[11px] text-slate-600 leading-snug">
                             {isMeniscusAligned 
-                                ? '✅ Garis pandang mata tegak lurus horizontal sejajar dengan dasar cekungan air (meniskus bawah). Pembacaan 100% valid!' 
-                                : '⚠️ Terjadi Kesalahan Paralaks! Geser slider agar mata tegak lurus dengan titik terendah lengkungan air.'}
+                                ? 'âœ… Garis pandang mata tegak lurus horizontal sejajar dengan dasar cekungan air (meniskus bawah). Pembacaan 100% valid!' 
+                                : 'âš ï¸ Terjadi Kesalahan Paralaks! Geser slider agar mata tegak lurus dengan titik terendah lengkungan air.'}
                         </p>
                     </div>
 
@@ -572,7 +548,7 @@ export default function SimulasiOmbrometer() {
                     <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 sm:p-5 space-y-3.5 shadow-xs">
                         <div className="flex items-center justify-between">
                             <span className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-                                <span>📋</span> Buku Log Observasi Harian BMKG
+                                <span>ðŸ“‹</span> Buku Log Observasi Harian BMKG
                             </span>
                             <span className="text-[10px] bg-blue-100 text-blue-800 font-extrabold px-2 py-0.5 rounded-full border border-blue-200">
                                 Form ME-45
@@ -607,7 +583,7 @@ export default function SimulasiOmbrometer() {
 
                         {/* ATURAN HUJAN JEJAK (TRACE / TT) RESMI BMKG */}
                         <div className="p-2.5 bg-cyan-50/80 rounded-xl border border-cyan-200/60 text-[10.5px] text-cyan-950 leading-relaxed">
-                            💡 <strong>Aturan Baku BMKG (Hujan Jejak):</strong> Jika hujan turun namun jumlah air di gelas ukur kurang dari 0.5 mm (hanya membasahi corong/dasar gelas), observer dilarang mencatat 0.0 mm. Hasil wajib dicatat sebagai <strong>"TT" (Tercatat / Trace)</strong> untuk membuktikan bahwa hujan memang terjadi secara meteorologis!
+                            ðŸ’¡ <strong>Aturan Baku BMKG (Hujan Jejak):</strong> Jika hujan turun namun jumlah air di gelas ukur kurang dari 0.5 mm (hanya membasahi corong/dasar gelas), observer dilarang mencatat 0.0 mm. Hasil wajib dicatat sebagai <strong>"TT" (Tercatat / Trace)</strong> untuk membuktikan bahwa hujan memang terjadi secara meteorologis!
                         </div>
                     </div>
                 </div>

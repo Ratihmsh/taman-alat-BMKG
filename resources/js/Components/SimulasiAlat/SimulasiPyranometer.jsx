@@ -107,31 +107,7 @@ export default function SimulasiPyranometer() {
     const formattedTime = `${String(hourInt).padStart(2, '0')}:${String(minutesInt).padStart(2, '0')}`;
 
     return (
-        <div className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-7 shadow-sm space-y-6">
-            {/* Header Modul Simulasi */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-slate-150">
-                <div>
-                    <div className="inline-flex items-center gap-1.5 bg-amber-50 text-amber-700 font-bold text-[11px] px-3 py-1 rounded-full uppercase tracking-wider mb-1.5 border border-amber-200/60">
-                        <span>☀️</span> Radiasi Matahari & Energi Surya
-                    </div>
-                    <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-                        <span>⚡</span> Simulasi Cara Kerja Pyranometer
-                    </h3>
-                    <p className="text-xs text-slate-500">
-                        Simulasi pengukuran Radiasi Matahari Global (W/m²), Aktinogram real-time, efek thermopile Seebeck, dan SOP pemeliharaan BMKG.
-                    </p>
-                </div>
-
-                {/* Status Ringkas Header */}
-                <div className="flex items-center gap-2">
-                    <span className={`text-xs font-bold px-3 py-1 rounded-full border ${radCategory.bg} ${radCategory.color} ${radCategory.border}`}>
-                        {radCategory.label}
-                    </span>
-                    <span className="text-xs font-mono font-bold bg-slate-900 text-amber-400 px-3 py-1 rounded-full border border-slate-700 shadow-2xs">
-                        🕒 {formattedTime} WIB
-                    </span>
-                </div>
-            </div>
+        <div className="space-y-6">
 
             {/* Layout Utama 1 Section Terpadu */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -141,17 +117,17 @@ export default function SimulasiPyranometer() {
                         {/* Status bar kecil di atas kanvas */}
                         <div className="flex items-center justify-between mb-2 text-xs">
                             <span className="font-bold text-slate-700 flex items-center gap-1.5">
-                                <span>{isCloudCovered ? '☁️' : '☀️'}</span>
+                                <span>{isCloudCovered ? 'â˜ï¸' : 'â˜€ï¸'}</span>
                                 <span>Kondisi Langit: <strong>{isCloudCovered ? 'Awan Tebal Menutupi Matahari' : 'Langit Biru Cerah'}</strong></span>
                             </span>
                             <span className={`text-[11px] font-bold ${isLevel && !isDomeDirty && isSilicaDry ? 'text-emerald-600' : 'text-rose-600 animate-pulse'}`}>
                                 {!isLevel
-                                    ? '⚠️ Sensor Miring (Koreksi Waterpass!)'
+                                    ? 'âš ï¸ Sensor Miring (Koreksi Waterpass!)'
                                     : isDomeDirty
-                                    ? '⚠️ Kubah Kaca Kotor (Perlu Lap!)'
+                                    ? 'âš ï¸ Kubah Kaca Kotor (Perlu Lap!)'
                                     : !isSilicaDry
-                                    ? '⚠️ Silica Gel Jenuh (Kubah Berembun!)'
-                                    : '✅ Sensor Normal & Datar (WMO)'}
+                                    ? 'âš ï¸ Silica Gel Jenuh (Kubah Berembun!)'
+                                    : 'âœ… Sensor Normal & Datar (WMO)'}
                             </span>
                         </div>
 
@@ -205,7 +181,7 @@ export default function SimulasiPyranometer() {
                                         transform={`rotate(${deg})`}
                                     />
                                 ))}
-                                <text x="0" y="3" textAnchor="middle" fill="#78350f" fontSize="8" fontWeight="black">☀️</text>
+                                <text x="0" y="3" textAnchor="middle" fill="#78350f" fontSize="8" fontWeight="black">â˜€ï¸</text>
                             </g>
 
                             {/* AWAN MELINTAS JIKA isCloudCovered = TRUE */}
@@ -344,7 +320,7 @@ export default function SimulasiPyranometer() {
                                 <text x="52" y="38" textAnchor="middle" fill="#38bdf8" fontSize="16" fontWeight="black" fontFamily="monospace">
                                     {calculatedRadiation}
                                 </text>
-                                <text x="52" y="52" textAnchor="middle" fill="#38bdf8" fontSize="8" fontWeight="bold">Watt / m²</text>
+                                <text x="52" y="52" textAnchor="middle" fill="#38bdf8" fontSize="8" fontWeight="bold">Watt / mÂ²</text>
                             </g>
                         </svg>
                     </div>
@@ -360,7 +336,7 @@ export default function SimulasiPyranometer() {
                                     : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
                             }`}
                         >
-                            <span>{isCloudCovered ? '☁️ Awan Aktif' : '☀️ Langit Cerah'}</span>
+                            <span>{isCloudCovered ? 'â˜ï¸ Awan Aktif' : 'â˜€ï¸ Langit Cerah'}</span>
                         </button>
 
                         {/* 2. Tombol Pembersih Kubah Kaca */}
@@ -372,7 +348,7 @@ export default function SimulasiPyranometer() {
                                     : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
                             }`}
                         >
-                            <span>{isDomeDirty ? '🧼 Lap Kaca!' : '✨ Kubah Bersih'}</span>
+                            <span>{isDomeDirty ? 'ðŸ§¼ Lap Kaca!' : 'âœ¨ Kubah Bersih'}</span>
                         </button>
 
                         {/* 3. Tombol Leveling Waterpass */}
@@ -384,7 +360,7 @@ export default function SimulasiPyranometer() {
                                     : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
                             }`}
                         >
-                            <span>{!isLevel ? '⚖️ Luruskan!' : '✅ Waterpass 0°'}</span>
+                            <span>{!isLevel ? 'âš–ï¸ Luruskan!' : 'âœ… Waterpass 0Â°'}</span>
                         </button>
 
                         {/* 4. Tombol Desiccant Silica Gel */}
@@ -396,13 +372,13 @@ export default function SimulasiPyranometer() {
                                     : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
                             }`}
                         >
-                            <span>{!isSilicaDry ? '🔄 Ganti Silica!' : '🔵 Silica Kering'}</span>
+                            <span>{!isSilicaDry ? 'ðŸ”„ Ganti Silica!' : 'ðŸ”µ Silica Kering'}</span>
                         </button>
                     </div>
 
                     {/* SOP Observer BMKG Pemeliharaan Pyranometer */}
                     <div className="p-3 bg-blue-50/80 rounded-xl border border-blue-200/70 text-[11px] text-blue-900 leading-relaxed flex items-start gap-2">
-                        <span className="text-sm shrink-0">📋</span>
+                        <span className="text-sm shrink-0">ðŸ“‹</span>
                         <div>
                             <strong>Tiga Pilar SOP Observer BMKG:</strong>
                             <ul className="list-disc list-inside mt-1 space-y-0.5 text-[10.5px]">
@@ -421,7 +397,7 @@ export default function SimulasiPyranometer() {
                     <div className="p-4 bg-slate-900 text-white rounded-2xl shadow-xs space-y-3.5">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                                <span className="text-xl">☀️</span>
+                                <span className="text-xl">â˜€ï¸</span>
                                 <div>
                                     <span className="text-[10px] text-slate-400 uppercase tracking-wide block">Waktu Lintasan Matahari</span>
                                     <span className="text-sm font-extrabold text-amber-400">
@@ -432,7 +408,7 @@ export default function SimulasiPyranometer() {
                             <div className="text-right">
                                 <span className="text-[10px] text-slate-400 block">Intensitas Radiasi:</span>
                                 <span className="text-base font-black text-amber-400 font-mono">
-                                    {calculatedRadiation} W/m²
+                                    {calculatedRadiation} W/mÂ²
                                 </span>
                             </div>
                         </div>
@@ -458,7 +434,7 @@ export default function SimulasiPyranometer() {
                         </div>
 
                         <p className="text-[11px] text-slate-300 leading-snug bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/80">
-                            💡 <em>Geser slider ke jam 12:00</em> untuk melihat radiasi global mencapai puncaknya (~1000 W/m²). Lalu coba klik tombol <strong>"Awan Melintas"</strong> untuk melihat drop radiasi seketika!
+                            ðŸ’¡ <em>Geser slider ke jam 12:00</em> untuk melihat radiasi global mencapai puncaknya (~1000 W/mÂ²). Lalu coba klik tombol <strong>"Awan Melintas"</strong> untuk melihat drop radiasi seketika!
                         </p>
                     </div>
 
@@ -468,7 +444,7 @@ export default function SimulasiPyranometer() {
                         <div className="space-y-2 pb-3.5 border-b border-slate-200/80">
                             <div className="flex items-center justify-between gap-2">
                                 <span className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-                                    <span>🛡️</span> Skala Indeks Sinar UV (Edukasi Publik)
+                                    <span>ðŸ›¡ï¸</span> Skala Indeks Sinar UV (Edukasi Publik)
                                 </span>
                                 <span className={`text-[11px] font-black px-2.5 py-0.5 rounded-full border ${uvData.color}`}>
                                     UV: {uvData.score} ({uvData.category})
@@ -502,7 +478,7 @@ export default function SimulasiPyranometer() {
                                 <div className="p-2.5 bg-white rounded-xl border border-slate-200 shadow-2xs">
                                     <span className="text-[10px] text-slate-400 block">Tegangan Sensor (V)</span>
                                     <span className="text-sm font-bold text-indigo-700 font-mono">
-                                        {thermopileMicroVolts} µV
+                                        {thermopileMicroVolts} ÂµV
                                     </span>
                                     <span className="text-[9px] text-slate-500">({thermopileMilliVolts} mV)</span>
                                 </div>
@@ -510,20 +486,20 @@ export default function SimulasiPyranometer() {
                                 <div className="p-2.5 bg-white rounded-xl border border-slate-200 shadow-2xs">
                                     <span className="text-[10px] text-slate-400 block">Konstanta Kalibrasi (k)</span>
                                     <span className="text-sm font-bold text-slate-800 font-mono">10.0</span>
-                                    <span className="text-[9px] text-slate-500">µV / (W/m²)</span>
+                                    <span className="text-[9px] text-slate-500">ÂµV / (W/mÂ²)</span>
                                 </div>
                             </div>
 
                             {/* Rumus Konversi Radiasi BMKG */}
                             {/* <div className="p-2.5 bg-amber-50/80 rounded-xl border border-amber-200/60 text-[10px] text-amber-900 leading-relaxed font-mono">
-                                <strong>Rumus:</strong> Radiasi = Tegangan (µV) / k = {thermopileMicroVolts} µV / 10.0 = <strong>{calculatedRadiation} W/m²</strong>
+                                <strong>Rumus:</strong> Radiasi = Tegangan (ÂµV) / k = {thermopileMicroVolts} ÂµV / 10.0 = <strong>{calculatedRadiation} W/mÂ²</strong>
                             </div> */}
 
                             {/* POTENSI ENERGI PANEL SURYA / PLTS */}
                             <div className="p-3 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl border border-emerald-200 flex items-center justify-between text-xs">
                                 <div>
                                     <span className="text-[10px] font-bold text-emerald-800 block">Potensi Energi Surya (PLTS):</span>
-                                    <span className="text-[11px] text-emerald-700">Daya Listrik per 1 m² panel surya (efisiensi 20%)</span>
+                                    <span className="text-[11px] text-emerald-700">Daya Listrik per 1 mÂ² panel surya (efisiensi 20%)</span>
                                 </div>
                                 <span className="text-base font-black text-emerald-800 font-mono">
                                     ~{solarPanelPowerWatts} Watt

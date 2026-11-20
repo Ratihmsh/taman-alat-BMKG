@@ -120,31 +120,7 @@ export default function SimulasiHVSampler() {
     const isFlowRateValid = flowRate >= 1.13 && flowRate <= 1.70;
 
     return (
-        <div className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-7 shadow-sm space-y-6 relative">
-            {/* Header Ringkas Modul Simulasi */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-slate-150">
-                <div>
-                    <div className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 font-bold text-[11px] px-3 py-1 rounded-full uppercase tracking-wider mb-1.5 border border-blue-200/60">
-                        <span>🔬</span> Laboratorium Gravimetri Kualitas Udara BMKG
-                    </div>
-                    <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-                        <span>🌪️</span> Simulasi High Volume Air Sampler (HV Sampler)
-                    </h3>
-                    <p className="text-xs text-slate-500">
-                        Uji efek sedotan motor vacuum 24 jam, akumulasi partikulat pada kertas filter, dan metode penimbangan gravimetri laboratorium.
-                    </p>
-                </div>
-
-                {/* Status Ringkas Header */}
-                <div className="flex items-center gap-2">
-                    <span className={`text-xs font-bold px-3 py-1 rounded-full border ${ispuStatus.bg} ${ispuStatus.color} ${ispuStatus.border}`}>
-                        ISPU: {ispuStatus.label}
-                    </span>
-                    <span className="text-xs font-mono font-bold bg-slate-900 text-amber-400 px-3 py-1 rounded-full border border-slate-700 shadow-2xs">
-                        Durasi: {samplingHours} Jam
-                    </span>
-                </div>
-            </div>
+        <div className="space-y-6 space-y-6 relative">
 
             {/* Layout Utama 1 Section Terpadu */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -158,11 +134,11 @@ export default function SimulasiHVSampler() {
                     }`}>
                         <div className="flex items-center justify-between mb-2 text-xs">
                             <span className="font-bold text-slate-700 flex items-center gap-1.5">
-                                <span className={isMotorRunning && samplingHours > 0 ? 'inline-block animate-bounce text-blue-600' : 'text-slate-400'}>⚡</span>
+                                <span className={isMotorRunning && samplingHours > 0 ? 'inline-block animate-bounce text-blue-600' : 'text-slate-400'}>âš¡</span>
                                 <span>Status Motor: <strong>{isMotorRunning && samplingHours > 0 ? 'Menghisap Udara' : 'Mati / Siaga'}</strong></span>
                             </span>
                             <span className={`text-[11px] font-bold ${isRaining ? 'text-blue-700 bg-blue-100/80 px-2 py-0.5 rounded-md' : 'text-amber-700 bg-amber-100/80 px-2 py-0.5 rounded-md'}`}>
-                                {isRaining ? '🌧️ Efek Washout Hujan: Partikel Debu Luruh ke Tanah!' : '☀️ Cuaca Kering / Cerah: Debu Melayang Bebas'}
+                                {isRaining ? 'ðŸŒ§ï¸ Efek Washout Hujan: Partikel Debu Luruh ke Tanah!' : 'â˜€ï¸ Cuaca Kering / Cerah: Debu Melayang Bebas'}
                             </span>
                         </div>
 
@@ -201,13 +177,13 @@ export default function SimulasiHVSampler() {
                                             <circle cx="110" cy="30" r="2.5" fill="#475569" />
                                             <circle cx="340" cy="40" r="3" fill="#64748b" />
                                             <circle cx="370" cy="60" r="2.5" fill="#475569" className="animate-ping" />
-                                            <text x="75" y="90" fill="#2563eb" fontSize="9" fontWeight="bold">Udara Ambien Masuk ➔</text>
-                                            <text x="375" y="90" textAnchor="end" fill="#2563eb" fontSize="9" fontWeight="bold">➔ Udara Masuk</text>
+                                            <text x="75" y="90" fill="#2563eb" fontSize="9" fontWeight="bold">Udara Ambien Masuk âž”</text>
+                                            <text x="375" y="90" textAnchor="end" fill="#2563eb" fontSize="9" fontWeight="bold">âž” Udara Masuk</text>
                                         </>
                                     ) : (
                                         <>
-                                            <text x="75" y="90" fill="#0284c7" fontSize="8" fontWeight="bold">Debu Tersapu Hujan ↓</text>
-                                            <text x="375" y="90" textAnchor="end" fill="#0284c7" fontSize="8" fontWeight="bold">↓ Udara Bersih</text>
+                                            <text x="75" y="90" fill="#0284c7" fontSize="8" fontWeight="bold">Debu Tersapu Hujan â†“</text>
+                                            <text x="375" y="90" textAnchor="end" fill="#0284c7" fontSize="8" fontWeight="bold">â†“ Udara Bersih</text>
                                         </>
                                     )}
 
@@ -309,7 +285,7 @@ export default function SimulasiHVSampler() {
                                 <text x="37" y="14" textAnchor="middle" fill="#475569" fontSize="7" fontWeight="bold">FLOW RECORDER</text>
                                 <circle cx="37" cy="34" r="14" fill="#ffffff" stroke={isFlowRateValid ? "#10b981" : "#f43f5e"} strokeWidth="2" />
                                 <text x="37" y="38" textAnchor="middle" fill="#0f172a" fontSize="10" fontWeight="black">{flowRate}</text>
-                                <text x="37" y="46" textAnchor="middle" fill="#64748b" fontSize="6">m³/menit</text>
+                                <text x="37" y="46" textAnchor="middle" fill="#64748b" fontSize="6">mÂ³/menit</text>
                             </g>
 
                             {/* PREVIEW FILTER JIKA DIINSPEKSI */}
@@ -349,7 +325,7 @@ export default function SimulasiHVSampler() {
                                         !isRaining ? 'bg-amber-500 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 bg-transparent'
                                     }`}
                                 >
-                                    ☀️ Cerah
+                                    â˜€ï¸ Cerah
                                 </button>
                                 <button
                                     onClick={() => setWeatherCondition('hujan')}
@@ -357,7 +333,7 @@ export default function SimulasiHVSampler() {
                                         isRaining ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 bg-transparent'
                                     }`}
                                 >
-                                    🌧️ Hujan
+                                    ðŸŒ§ï¸ Hujan
                                 </button>
                             </div>
                         </div>
@@ -372,7 +348,7 @@ export default function SimulasiHVSampler() {
                                         : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
                                 }`}
                             >
-                                <span>{inspectFilter ? '🔒 Tutup Atap' : '🔍 Intip Filter'}</span>
+                                <span>{inspectFilter ? 'ðŸ”’ Tutup Atap' : 'ðŸ” Intip Filter'}</span>
                             </button>
 
                             <button
@@ -383,7 +359,7 @@ export default function SimulasiHVSampler() {
                                         : 'bg-rose-50 text-rose-700 border-rose-300 animate-pulse'
                                 }`}
                             >
-                                <span>{isMotorRunning ? '🟢 Motor ON' : '🔴 Motor OFF'}</span>
+                                <span>{isMotorRunning ? 'ðŸŸ¢ Motor ON' : 'ðŸ”´ Motor OFF'}</span>
                             </button>
                         </div>
 
@@ -393,7 +369,7 @@ export default function SimulasiHVSampler() {
                     <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3">
                         <div className="flex items-center justify-between border-b border-slate-200/80 pb-2">
                             <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                                <span>🧪</span> SOP Penanganan Filter (SNI 19-7119.3-2005)
+                                <span>ðŸ§ª</span> SOP Penanganan Filter (SNI 19-7119.3-2005)
                             </span>
                             <span className="text-[10px] text-blue-700 font-extrabold bg-blue-100 px-2 py-0.5 rounded-full">
                                 Standar Akreditasi
@@ -405,7 +381,7 @@ export default function SimulasiHVSampler() {
                             {/* Desikator */}
                             <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-2xs space-y-1">
                                 <div className="flex items-center gap-1.5 font-bold text-slate-800 text-[11px]">
-                                    <span className="text-sm">🫙</span>
+                                    <span className="text-sm">ðŸ«™</span>
                                     <span>Desikasi 24 Jam (Silica Gel)</span>
                                 </div>
                                 <p className="text-[10px] text-slate-600 leading-relaxed text-justify">
@@ -416,7 +392,7 @@ export default function SimulasiHVSampler() {
                             {/* Pinset Khusus */}
                             <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-2xs space-y-1">
                                 <div className="flex items-center gap-1.5 font-bold text-slate-800 text-[11px]">
-                                    <span className="text-sm">🥢</span>
+                                    <span className="text-sm">ðŸ¥¢</span>
                                     <span>Wajib Gunakan Pinset Khusus</span>
                                 </div>
                                 <p className="text-[10px] text-slate-600 leading-relaxed text-justify">
@@ -434,7 +410,7 @@ export default function SimulasiHVSampler() {
                                 <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                 </svg>
-                                <span>📄 Lihat Lembar Logbook Simulasi</span>
+                                <span>ðŸ“„ Lihat Lembar Logbook Simulasi</span>
                             </button>
                         </div>
                     </div>
@@ -447,7 +423,7 @@ export default function SimulasiHVSampler() {
                         {/* 1. Pemilihan Skenario Lingkungan Ambien */}
                         <div className="space-y-1.5">
                             <span className="text-xs font-bold text-slate-300 flex items-center gap-1">
-                                <span>🏙️</span> Lokasi / Kualitas Udara Luar:
+                                <span>ðŸ™ï¸</span> Lokasi / Kualitas Udara Luar:
                             </span>
                             <div className="grid grid-cols-2 gap-1.5">
                                 {Object.keys(baseScenarioData).map((key) => {
@@ -466,7 +442,7 @@ export default function SimulasiHVSampler() {
                                             }`}
                                         >
                                             <span className="text-[11px] font-bold block truncate">{sc.name.split('(')[0]}</span>
-                                            <span className="text-[9px] text-slate-300">~{displayConc} µg/m³</span>
+                                            <span className="text-[9px] text-slate-300">~{displayConc} Âµg/mÂ³</span>
                                         </button>
                                     );
                                 })}
@@ -477,7 +453,7 @@ export default function SimulasiHVSampler() {
                         <div className="space-y-1 pt-2 border-t border-slate-800">
                             <div className="flex items-center justify-between">
                                 <span className="text-xs font-bold text-slate-300 flex items-center gap-1">
-                                    <span>⏱️</span> Durasi Sampling Udara:
+                                    <span>â±ï¸</span> Durasi Sampling Udara:
                                 </span>
                                 <span className="text-sm font-black text-amber-400 font-mono">
                                     {samplingHours} Jam {samplingHours === 24 && '(Standar BMKG)'}
@@ -504,10 +480,10 @@ export default function SimulasiHVSampler() {
                         <div className="space-y-1 pt-2 border-t border-slate-800">
                             <div className="flex items-center justify-between">
                                 <span className="text-xs font-bold text-slate-300 flex items-center gap-1">
-                                    <span>💨</span> Flow Rate:
+                                    <span>ðŸ’¨</span> Flow Rate:
                                 </span>
                                 <span className={`text-sm font-black font-mono ${isFlowRateValid ? 'text-emerald-400' : 'text-rose-400 animate-pulse'}`}>
-                                    {flowRate} m³/menit
+                                    {flowRate} mÂ³/menit
                                 </span>
                             </div>
                             <input
@@ -520,16 +496,16 @@ export default function SimulasiHVSampler() {
                                 className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
                             />
                             <div className="flex justify-between text-[9px] text-slate-400 font-mono">
-                                <span>1.0 m³/m</span>
+                                <span>1.0 mÂ³/m</span>
                                 <span className="text-emerald-400 font-bold">1.13 - 1.70 (Standar WMO)</span>
-                                <span>1.8 m³/m</span>
+                                <span>1.8 mÂ³/m</span>
                             </div>
                         </div>
 
                         {/* Keterangan Insight Hujan */}
                         {isRaining && (
                             <div className="p-2.5 bg-blue-950/80 rounded-xl border border-blue-700/70 text-[11px] text-sky-200 leading-snug">
-                                🌧️ <strong>Insight Meteorologi:</strong> Hujan menyebabkan <em>wet deposition / washout effect</em>. Tetesan air hujan mengikat partikel debu melayang dan membawanya jatuh ke tanah, sehingga konsentrasi polutan yang dihisap turun drastis ke <strong>{calculatedConcentration} µg/m³</strong>!
+                                ðŸŒ§ï¸ <strong>Insight Meteorologi:</strong> Hujan menyebabkan <em>wet deposition / washout effect</em>. Tetesan air hujan mengikat partikel debu melayang dan membawanya jatuh ke tanah, sehingga konsentrasi polutan yang dihisap turun drastis ke <strong>{calculatedConcentration} Âµg/mÂ³</strong>!
                             </div>
                         )}
                     </div>
@@ -548,20 +524,20 @@ export default function SimulasiHVSampler() {
                         {/* Tiga Kotak Data Timbang */}
                         <div className="grid grid-cols-3 gap-2 text-center text-xs">
                             <div className="p-2.5 bg-white rounded-xl border border-slate-200 shadow-2xs">
-                                <span className="text-[9px] text-slate-400 block">Berat Awal (W₁)</span>
+                                <span className="text-[9px] text-slate-400 block">Berat Awal (Wâ‚)</span>
                                 <span className="text-xs font-bold text-slate-800 font-mono">{weightInitialW1.toFixed(4)} g</span>
                                 <span className="text-[8px] text-slate-500">Filter Bersih</span>
                             </div>
 
                             <div className="p-2.5 bg-white rounded-xl border border-slate-200 shadow-2xs">
-                                <span className="text-[9px] text-slate-400 block">Berat Akhir (W₂)</span>
+                                <span className="text-[9px] text-slate-400 block">Berat Akhir (Wâ‚‚)</span>
                                 <span className="text-xs font-bold text-blue-700 font-mono">{weightFinalW2.toFixed(4)} g</span>
                                 <span className="text-[8px] text-blue-500">Debu Tersaring</span>
                             </div>
 
                             <div className="p-2.5 bg-white rounded-xl border border-slate-200 shadow-2xs">
                                 <span className="text-[9px] text-slate-400 block">Vol. Udara (V)</span>
-                                <span className="text-xs font-bold text-emerald-700 font-mono">{totalVolumeAir} m³</span>
+                                <span className="text-xs font-bold text-emerald-700 font-mono">{totalVolumeAir} mÂ³</span>
                                 <span className="text-[8px] text-emerald-500">Tersedot Total</span>
                             </div>
                         </div>
@@ -569,9 +545,9 @@ export default function SimulasiHVSampler() {
                         {/* Hasil Perhitungan Konsentrasi Akhir */}
                         <div className={`p-3.5 rounded-xl border ${ispuStatus.border} ${ispuStatus.bg}`}>
                             <div className="flex items-center justify-between mb-1">
-                                <span className="text-xs font-bold text-slate-700">Konsentrasi Partikulat (TSP / PM₁₀):</span>
+                                <span className="text-xs font-bold text-slate-700">Konsentrasi Partikulat (TSP / PMâ‚â‚€):</span>
                                 <span className={`text-base font-black ${ispuStatus.color} font-mono`}>
-                                    {calculatedConcentration} µg/m³
+                                    {calculatedConcentration} Âµg/mÂ³
                                 </span>
                             </div>
                             <div className="flex items-center justify-between text-[11px] pt-1 border-t border-slate-200/60">
@@ -584,9 +560,9 @@ export default function SimulasiHVSampler() {
 
                         {/* Rumus Gravimetri Singkat & Koreksi Standar */}
                         <div className="p-2.5 bg-blue-50/80 rounded-xl border border-blue-200/60 text-[10px] text-blue-900 leading-relaxed font-mono">
-                            <strong>Rumus:</strong> ((W₂ - W₁) × 10⁶) / V = (( {weightFinalW2.toFixed(4)} - {weightInitialW1.toFixed(4)} ) × 10⁶) / {totalVolumeAir || 1} = <strong>{calculatedConcentration} µg/m³</strong>
+                            <strong>Rumus:</strong> ((Wâ‚‚ - Wâ‚) Ã— 10â¶) / V = (( {weightFinalW2.toFixed(4)} - {weightInitialW1.toFixed(4)} ) Ã— 10â¶) / {totalVolumeAir || 1} = <strong>{calculatedConcentration} Âµg/mÂ³</strong>
                             <div className="text-[9px] text-slate-500 font-sans mt-1">
-                                *Catatan: Volume udara (V) terkoreksi pada kondisi temperatur 25°C dan tekanan atmosfer 760 mmHg standar BMKG.
+                                *Catatan: Volume udara (V) terkoreksi pada kondisi temperatur 25Â°C dan tekanan atmosfer 760 mmHg standar BMKG.
                             </div>
                         </div>
                     </div>
@@ -608,7 +584,7 @@ export default function SimulasiHVSampler() {
                             onClick={() => setShowLogbookModal(false)}
                             className="absolute top-4 right-4 text-slate-400 hover:text-slate-700 p-1.5 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
                         >
-                            ✕
+                            âœ•
                         </button>
 
                         {/* Kop Lembar Observasi BMKG */}
@@ -636,18 +612,18 @@ export default function SimulasiHVSampler() {
                             </div>
                             <div className="flex justify-between py-1 border-b border-slate-100">
                                 <span className="text-slate-500 font-medium">Durasi & Laju Hisap</span>
-                                <span className="font-bold text-slate-800">{samplingHours} Jam @ {flowRate} m³/menit</span>
+                                <span className="font-bold text-slate-800">{samplingHours} Jam @ {flowRate} mÂ³/menit</span>
                             </div>
                             <div className="flex justify-between py-1 border-b border-slate-100">
                                 <span className="text-slate-500 font-medium">Total Volume Udara (V)</span>
-                                <span className="font-mono font-bold text-slate-800">{totalVolumeAir} m³</span>
+                                <span className="font-mono font-bold text-slate-800">{totalVolumeAir} mÂ³</span>
                             </div>
                             <div className="flex justify-between py-1 border-b border-slate-100">
-                                <span className="text-slate-500 font-medium">Bobot Filter Bersih (W₁)</span>
+                                <span className="text-slate-500 font-medium">Bobot Filter Bersih (Wâ‚)</span>
                                 <span className="font-mono text-slate-700">{weightInitialW1.toFixed(4)} gram</span>
                             </div>
                             <div className="flex justify-between py-1 border-b border-slate-100">
-                                <span className="text-slate-500 font-medium">Bobot Filter + Debu (W₂)</span>
+                                <span className="text-slate-500 font-medium">Bobot Filter + Debu (Wâ‚‚)</span>
                                 <span className="font-mono font-bold text-blue-700">{weightFinalW2.toFixed(4)} gram</span>
                             </div>
                             <div className="flex justify-between py-1 border-b border-slate-100">
@@ -659,7 +635,7 @@ export default function SimulasiHVSampler() {
                             <div className="mt-3 p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
                                 <div>
                                     <span className="text-[10px] text-slate-500 block">Konsentrasi Akhir Terhitung:</span>
-                                    <span className="text-lg font-black text-slate-900 font-mono">{calculatedConcentration} µg/m³</span>
+                                    <span className="text-lg font-black text-slate-900 font-mono">{calculatedConcentration} Âµg/mÂ³</span>
                                 </div>
                                 <div className={`text-right px-3 py-1.5 rounded-lg border font-extrabold text-xs ${ispuStatus.bg} ${ispuStatus.color} ${ispuStatus.border}`}>
                                     {ispuStatus.label}

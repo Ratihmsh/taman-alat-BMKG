@@ -3,9 +3,9 @@ import { Head, Link, router } from '@inertiajs/react';
 
 export default function InformasiAlat({ instruments = [], selectedId = null }) {
     // Default to selectedId or first instrument
-    const defaultInstrument = (selectedId ? instruments.find(i => i.id === Number(selectedId)) : null) 
+    const defaultInstrument = (selectedId ? instruments.find(i => i.id === Number(selectedId)) : null)
         || (instruments.length > 0 ? instruments[0] : null);
-    
+
     const [currentId, setCurrentId] = useState(
         selectedId ? Number(selectedId) : (defaultInstrument ? defaultInstrument.id : null)
     );
@@ -81,9 +81,9 @@ export default function InformasiAlat({ instruments = [], selectedId = null }) {
                         {/* Left: BMKG Logo + Brand Info */}
                         <div className="flex items-center gap-3">
                             <Link href="/" className="flex items-center gap-3 group">
-                                <img 
-                                    src="/images/bmkg_logo.png" 
-                                    alt="BMKG Logo" 
+                                <img
+                                    src="/images/bmkg_logo.png"
+                                    alt="BMKG Logo"
                                     className="h-9 w-auto object-contain transition-transform group-hover:scale-105"
                                     onError={(e) => {
                                         e.target.style.display = 'none';
@@ -103,7 +103,7 @@ export default function InformasiAlat({ instruments = [], selectedId = null }) {
 
                         {/* Right: Actions */}
                         <div className="flex items-center gap-2 sm:gap-4">
-                            <Link
+                            {/* <Link
                                 href="/virtual-tour"
                                 className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-xl text-xs sm:text-sm shadow-sm transition-all hover:shadow hover:-translate-y-0.5"
                             >
@@ -125,7 +125,7 @@ export default function InformasiAlat({ instruments = [], selectedId = null }) {
                                     <polyline points="9 22 9 12 15 12 15 22" />
                                 </svg>
                                 <span>Beranda</span>
-                            </Link>
+                            </Link> */}
                         </div>
                     </div>
                 </header>
@@ -235,8 +235,8 @@ export default function InformasiAlat({ instruments = [], selectedId = null }) {
                                 {/* Left Column: Photo Showcase */}
                                 <div className="lg:col-span-6 flex flex-col">
                                     <div className="rounded-2xl overflow-hidden relative shadow-sm group aspect-[16/11] bg-slate-100 flex items-center justify-center border border-slate-200/80">
-                                        <img 
-                                            src={activeInstrument.image_path || '/images/panci_penguapan.png'} 
+                                        <img
+                                            src={activeInstrument.image_path || '/images/panci_penguapan.png'}
                                             alt={activeInstrument.name}
                                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
                                             onError={(e) => {
@@ -288,7 +288,7 @@ export default function InformasiAlat({ instruments = [], selectedId = null }) {
                                                         <span>&larr;</span>
                                                         <span className="truncate">{prevInst ? prevInst.name.split('(')[0].trim() : 'Sebelumnya'}</span>
                                                     </button>
-                                                    
+
                                                     <button
                                                         onClick={() => nextInst && handleSelectInstrument(nextInst.id)}
                                                         disabled={!nextInst}
@@ -412,8 +412,8 @@ export default function InformasiAlat({ instruments = [], selectedId = null }) {
                                         key={inst.id}
                                         onClick={() => handleSelectInstrument(inst.id)}
                                         className={`bg-white rounded-2xl border p-5 flex flex-col justify-between transition-all cursor-pointer group hover:shadow-lg ${
-                                            isSelected 
-                                                ? 'border-blue-600 ring-2 ring-blue-500/20 shadow-md bg-blue-50/20' 
+                                            isSelected
+                                                ? 'border-blue-600 ring-2 ring-blue-500/20 shadow-md bg-blue-50/20'
                                                 : 'border-slate-200/80 hover:border-blue-300 shadow-xs'
                                         }`}
                                     >
@@ -474,11 +474,11 @@ export default function InformasiAlat({ instruments = [], selectedId = null }) {
 
                 {/* 5. Image Lightbox Modal */}
                 {showLightbox && (
-                    <div 
+                    <div
                         className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
                         onClick={() => setShowLightbox(false)}
                     >
-                        <div 
+                        <div
                             className="relative max-w-4xl w-full flex flex-col items-center"
                             onClick={(e) => e.stopPropagation()}
                         >
@@ -488,8 +488,8 @@ export default function InformasiAlat({ instruments = [], selectedId = null }) {
                             >
                                 ✕
                             </button>
-                            <img 
-                                src={activeInstrument?.image_path || '/images/panci_penguapan.png'} 
+                            <img
+                                src={activeInstrument?.image_path || '/images/panci_penguapan.png'}
                                 alt={activeInstrument?.name}
                                 className="max-h-[80vh] w-auto rounded-2xl shadow-2xl object-contain border border-white/20"
                             />

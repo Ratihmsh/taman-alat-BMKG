@@ -83,31 +83,7 @@ export default function SimulasiAutomaticRainGauge() {
     ];
 
     return (
-        <div className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-7 shadow-sm space-y-6">
-            {/* Header Ringkas Modul Simulasi */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-slate-150">
-                <div>
-                    <div className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-800 font-bold text-[11px] px-3 py-1 rounded-full uppercase tracking-wider mb-1.5 border border-blue-200/60">
-                        <span>🌧️</span> Presipitasi & Hidrometeorologi Otomatis
-                    </div>
-                    <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-                        <span>⚖️</span> Simulasi Penakar Hujan Otomatis (ARG Tipping Bucket)
-                    </h3>
-                    <p className="text-xs text-slate-500">
-                        Penampang Sinar-X bejana jungkit, slider intensitas dinamis, daya baterai telemetri AWS, dan SOP Quality Control BMKG.
-                    </p>
-                </div>
-
-                {/* Status Ringkas Header */}
-                <div className="flex items-center gap-2">
-                    <span className={`text-xs font-bold px-3 py-1 rounded-full border ${categoryData.bg} ${categoryData.color} ${categoryData.border}`}>
-                        {categoryData.label} ({rainRateMmH} mm/j)
-                    </span>
-                    <span className="text-xs font-mono font-bold bg-slate-900 text-cyan-400 px-3 py-1 rounded-full border border-slate-700 shadow-2xs">
-                        Total: {totalRainMm} mm ({tipCount} Tips)
-                    </span>
-                </div>
-            </div>
+        <div className="space-y-6">
 
             {/* Layout Utama Asimetris: 60% Visual Mekanik Sinar-X (7 Kolom) vs 40% Telemetri & QC (5 Kolom) */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -123,7 +99,7 @@ export default function SimulasiAutomaticRainGauge() {
                     }`}>
                         <div className="flex items-center justify-between">
                             <span className="text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
-                                <span>{categoryData.isAlert ? '🚨' : '📡'}</span> Status Mitigasi Hidrologi
+                                <span>{categoryData.isAlert ? 'ðŸš¨' : 'ðŸ“¡'}</span> Status Mitigasi Hidrologi
                             </span>
                             <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-black/30 text-white border border-white/20">
                                 AWS Real-Time Alert
@@ -147,18 +123,18 @@ export default function SimulasiAutomaticRainGauge() {
                         <div className="flex items-center justify-between mb-2 text-xs">
                             <span className="font-bold text-slate-300 flex items-center gap-1.5">
                                 <span className={`w-2 h-2 rounded-full ${isPulsing ? 'bg-emerald-400 animate-ping' : 'bg-slate-500'}`}></span>
-                                <span>Sensor Reed Switch: <strong>{isBatteryLow ? '⚠️ TRANSMISI TERTUNDA (LOW BATTERY)' : isPulsing ? '📡 PULSA DIGITAL (+0.2 mm)' : 'Standby'}</strong></span>
+                                <span>Sensor Reed Switch: <strong>{isBatteryLow ? 'âš ï¸ TRANSMISI TERTUNDA (LOW BATTERY)' : isPulsing ? 'ðŸ“¡ PULSA DIGITAL (+0.2 mm)' : 'Standby'}</strong></span>
                             </span>
                             <span className={`text-[11px] font-bold ${isFunnelClogged ? 'text-amber-400 animate-pulse' : hasSpiderWeb ? 'text-purple-400 animate-pulse' : hasWaterSpike ? 'text-rose-400 animate-pulse' : 'text-emerald-400'}`}>
                                 {isFunnelClogged
-                                    ? '⚠️ Corong Tersumbat Daun!'
+                                    ? 'âš ï¸ Corong Tersumbat Daun!'
                                     : hasSpiderWeb
-                                    ? '🕸️ Poros Terganjal Sarang Serangga!'
+                                    ? 'ðŸ•¸ï¸ Poros Terganjal Sarang Serangga!'
                                     : hasWaterSpike
-                                    ? '⚠️ False Spike Terdeteksi!'
+                                    ? 'âš ï¸ False Spike Terdeteksi!'
                                     : rainRateMmH <= 0.15
-                                    ? 'ℹ️ Rintik Halus (<0.2mm Menguap)'
-                                    : '✅ Jungkitan Berfungsi Normal'}
+                                    ? 'â„¹ï¸ Rintik Halus (<0.2mm Menguap)'
+                                    : 'âœ… Jungkitan Berfungsi Normal'}
                             </span>
                         </div>
 
@@ -269,7 +245,7 @@ export default function SimulasiAutomaticRainGauge() {
                                     <line x1="-25" y1="-5" x2="25" y2="15" stroke="#f1f5f9" strokeWidth="1.5" strokeDasharray="2 2" />
                                     <line x1="-20" y1="12" x2="20" y2="-10" stroke="#f1f5f9" strokeWidth="1.5" strokeDasharray="2 2" />
                                     <circle cx="0" cy="5" r="14" fill="none" stroke="#f8fafc" strokeWidth="1" strokeDasharray="3 3" />
-                                    <text x="0" y="32" textAnchor="middle" fill="#d8b4fe" fontSize="7" fontWeight="bold">🕸️ POROS TERGANJAL SARANG SERANGGA</text>
+                                    <text x="0" y="32" textAnchor="middle" fill="#d8b4fe" fontSize="7" fontWeight="bold">ðŸ•¸ï¸ POROS TERGANJAL SARANG SERANGGA</text>
                                 </g>
                             )}
 
@@ -314,7 +290,7 @@ export default function SimulasiAutomaticRainGauge() {
                         <div className="mt-3 p-3 bg-slate-950/90 rounded-xl border border-slate-800 space-y-2">
                             <div className="flex items-center justify-between text-xs">
                                 <span className="text-slate-300 font-semibold flex items-center gap-1.5">
-                                    <span>🎚️</span> Slider Intensitas Curah Hujan:
+                                    <span>ðŸŽšï¸</span> Slider Intensitas Curah Hujan:
                                 </span>
                                 <span className={`font-mono font-black ${categoryData.color}`}>
                                     {rainRateMmH.toFixed(1)} mm / jam ({categoryData.category})
@@ -357,7 +333,7 @@ export default function SimulasiAutomaticRainGauge() {
                                     : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
                             }`}
                         >
-                            <span>{isFunnelClogged ? '🧹 Bersihkan Daun!' : '🍂 Sumbat Daun'}</span>
+                            <span>{isFunnelClogged ? 'ðŸ§¹ Bersihkan Daun!' : 'ðŸ‚ Sumbat Daun'}</span>
                         </button>
 
                         {/* 2. Toggle Sarang Laba-laba / Serangga di Poros */}
@@ -369,7 +345,7 @@ export default function SimulasiAutomaticRainGauge() {
                                     : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
                             }`}
                         >
-                            <span>{hasSpiderWeb ? '🧹 Bersihkan Poros!' : '🕸️ Sarang Laba²'}</span>
+                            <span>{hasSpiderWeb ? 'ðŸ§¹ Bersihkan Poros!' : 'ðŸ•¸ï¸ Sarang LabaÂ²'}</span>
                         </button>
 
                         {/* 3. Tombol QC: Hapus Spike Data Palsu */}
@@ -381,7 +357,7 @@ export default function SimulasiAutomaticRainGauge() {
                                     : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
                             }`}
                         >
-                            <span>{hasWaterSpike ? '🛡️ Hapus Spike!' : '✅ QC Bersih'}</span>
+                            <span>{hasWaterSpike ? 'ðŸ›¡ï¸ Hapus Spike!' : 'âœ… QC Bersih'}</span>
                         </button>
 
                         {/* 4. Uji Kalibrasi Sekrup Stopper 0.2 mm */}
@@ -393,7 +369,7 @@ export default function SimulasiAutomaticRainGauge() {
                                     : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
                             }`}
                         >
-                            <span>{!isCalibrated ? '🔧 Kalibrasi Sekrup' : '⚖️ Presisi 0.2mm'}</span>
+                            <span>{!isCalibrated ? 'ðŸ”§ Kalibrasi Sekrup' : 'âš–ï¸ Presisi 0.2mm'}</span>
                         </button>
                     </div>
                 </div>
@@ -404,7 +380,7 @@ export default function SimulasiAutomaticRainGauge() {
                     <div className="bg-slate-900 text-white rounded-2xl p-4 sm:p-5 border border-slate-800 space-y-3.5 shadow-xs">
                         <div className="flex items-center justify-between">
                             <span className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
-                                <span>⚡</span> Daya Telemetri Pos Hujan Otomatis
+                                <span>âš¡</span> Daya Telemetri Pos Hujan Otomatis
                             </span>
                             <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold border ${isBatteryLow ? 'bg-rose-500/20 text-rose-300 border-rose-500/40 animate-pulse' : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'}`}>
                                 {isBatteryLow ? 'Low Battery (<11.2V)' : 'Daya Stabil (Normal)'}
@@ -414,7 +390,7 @@ export default function SimulasiAutomaticRainGauge() {
                         {/* Dua Bar Indikator: Solar Panel Voltage & Baterai 12V */}
                         <div className="grid grid-cols-2 gap-2 text-center text-xs">
                             <div className="p-2.5 bg-slate-950 rounded-xl border border-slate-800">
-                                <span className="text-[10px] text-slate-400 block mb-1">☀️ Solar Panel Output</span>
+                                <span className="text-[10px] text-slate-400 block mb-1">â˜€ï¸ Solar Panel Output</span>
                                 <span className="text-sm sm:text-base font-black text-amber-400 font-mono">
                                     {solarVoltage} Volt
                                 </span>
@@ -422,7 +398,7 @@ export default function SimulasiAutomaticRainGauge() {
                             </div>
 
                             <div className="p-2.5 bg-slate-950 rounded-xl border border-slate-800">
-                                <span className="text-[10px] text-slate-400 block mb-1">🔋 Aki Kering 12V</span>
+                                <span className="text-[10px] text-slate-400 block mb-1">ðŸ”‹ Aki Kering 12V</span>
                                 <span className={`text-sm sm:text-base font-black font-mono ${isBatteryLow ? 'text-rose-400' : 'text-emerald-400'}`}>
                                     {batteryVoltage} Volt
                                 </span>
@@ -438,7 +414,7 @@ export default function SimulasiAutomaticRainGauge() {
                         }`}>
                             <span>Status Pengiriman Data:</span>
                             <strong className={isBatteryLow ? 'text-rose-400' : 'text-emerald-400'}>
-                                {isBatteryLow ? '⚠️ Tertunda (Simpan di Datalogger)' : '📡 Terkirim Real-Time (GSM OK)'}
+                                {isBatteryLow ? 'âš ï¸ Tertunda (Simpan di Datalogger)' : 'ðŸ“¡ Terkirim Real-Time (GSM OK)'}
                             </strong>
                         </div>
                     </div>
@@ -501,7 +477,7 @@ export default function SimulasiAutomaticRainGauge() {
                     <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 sm:p-5 space-y-3 shadow-xs">
                         <div className="flex items-center justify-between">
                             <span className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-                                <span>🧮</span> Kalkulator Pulsa Bejana (WMO No. 8)
+                                <span>ðŸ§®</span> Kalkulator Pulsa Bejana (WMO No. 8)
                             </span>
                             <span className="text-[10px] bg-blue-100 text-blue-800 font-extrabold px-2 py-0.5 rounded-full border border-blue-200">
                                 1 Tip = {mmPerTip.toFixed(2)} mm
@@ -529,8 +505,8 @@ export default function SimulasiAutomaticRainGauge() {
 
                         {/* Rumus Konversi Pulsa BMKG */}
                         <div className="p-2.5 bg-amber-50/80 rounded-xl border border-amber-200/60 text-[10.5px] text-amber-950 font-mono leading-relaxed">
-                            <strong>Rumus:</strong> Hujan (mm) = Jumlah Jungkitan × {mmPerTip.toFixed(2)} mm <br />
-                            Hujan = {tipCount} × {mmPerTip.toFixed(2)} = <strong>{totalRainMm} mm</strong>
+                            <strong>Rumus:</strong> Hujan (mm) = Jumlah Jungkitan Ã— {mmPerTip.toFixed(2)} mm <br />
+                            Hujan = {tipCount} Ã— {mmPerTip.toFixed(2)} = <strong>{totalRainMm} mm</strong>
                         </div>
                     </div>
                 </div>

@@ -39,12 +39,12 @@ export default function SimulasiAutomaticWeatherStation() {
     const baseSolarW = isSolarDirty ? 18 : 65; // Jika kotor berdebu, output drop drastis
     const sensorMetrics = weatherScenario === 'clear'
         ? {
-            temp: 32.4, // °C
+            temp: 32.4, // Â°C
             rh: 58, // %
             windSpeed: 8, // Knot
             windDir: 135, // Tenggara (SE)
             windDirText: 'Tenggara (SE)',
-            solarRad: 890, // W/m²
+            solarRad: 890, // W/mÂ²
             pressure: 1012.4, // hPa
             rainRate: 0.0, // mm/jam
             solarPanelW: baseSolarW, // Watt
@@ -125,21 +125,21 @@ export default function SimulasiAutomaticWeatherStation() {
             type: 'Port Digital / RS-485 (SDI-12)',
             height: '10.0 Meter (Standar WMO Sinoptik)',
             desc: 'Mengukur kecepatan dan arah angin menggunakan gelombang ultrasonik tanpa bagian mekanis yang bergerak, tahan terhadap hembusan badai dan aus.',
-            reading: `${sensorMetrics.windSpeed} Knot | Arah: ${sensorMetrics.windDirText} (${sensorMetrics.windDir}°)`,
+            reading: `${sensorMetrics.windSpeed} Knot | Arah: ${sensorMetrics.windDirText} (${sensorMetrics.windDir}Â°)`,
         },
         solar: {
             title: 'Pyranometer Radiasi Global & Panel Surya 65W',
-            type: 'Port Analog Mikrovolt (µV) & Charger Regulator',
+            type: 'Port Analog Mikrovolt (ÂµV) & Charger Regulator',
             height: '2.5 Meter / Puncak Tiang Penyangga',
             desc: 'Mengukur intensitas sinar matahari global ($W/m^2$) dan mengisi ulang daya aki kering 12V. Bersihkan debu/kotoran burung agar pengisian daya tidak tekor.',
-            reading: `Radiasi: ${sensorMetrics.solarRad} W/m² | Daya Surya: ${sensorMetrics.solarPanelW} Watt ${isSolarDirty ? '(Kotor)' : '(Bersih)'}`,
+            reading: `Radiasi: ${sensorMetrics.solarRad} W/mÂ² | Daya Surya: ${sensorMetrics.solarPanelW} Watt ${isSolarDirty ? '(Kotor)' : '(Bersih)'}`,
         },
         temp_rh: {
             title: 'Sensor Suhu & Kelembapan Udara (Thermo-Hygrometer Pt100)',
             type: 'Port SDI-12 / Analog Resistif',
             height: '1.5 - 2.0 Meter di Dalam Multi-Plate Radiation Shield',
             desc: 'Piringan pelindung radiasi berventilasi alami melindungi sensor presisi dari panas matahari langsung dan percikan air hujan.',
-            reading: `Suhu: ${sensorMetrics.temp}°C | Kelembapan (RH): ${sensorMetrics.rh}%`,
+            reading: `Suhu: ${sensorMetrics.temp}Â°C | Kelembapan (RH): ${sensorMetrics.rh}%`,
         },
         rain: {
             title: 'Sensor Curah Hujan Otomatis (Tipping Bucket)',
@@ -161,7 +161,7 @@ export default function SimulasiAutomaticWeatherStation() {
             height: '1.5 Meter dari Permukaan Tanah',
             desc: 'Mengumpulkan sinyal semua sensor, memproses kalibrasi, menyimpan cadangan memori (SD Card), dan memancarkan data ke BMKG Pusat setiap 10 menit.',
             reading: isLoggerFallenByLightning 
-                ? '⚠️ KONSLET / HANG KARENA INDUKSI PETIR! (RESET FUSE!)' 
+                ? 'âš ï¸ KONSLET / HANG KARENA INDUKSI PETIR! (RESET FUSE!)' 
                 : `Baterai: ${sensorMetrics.batteryV}V | Buffer: ${bufferedDataCount} Paket | Status: ${isSignalOnline ? '4G LTE Online' : 'Offline Buffer'}`,
         },
     };
@@ -169,31 +169,7 @@ export default function SimulasiAutomaticWeatherStation() {
     const activeSensorInfo = sensorInfoMap[selectedSensor];
 
     return (
-        <div className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-7 shadow-sm space-y-6">
-            {/* Header Ringkas Modul Simulasi */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-slate-150">
-                <div>
-                    <div className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-800 font-bold text-[11px] px-3 py-1 rounded-full uppercase tracking-wider mb-1.5 border border-blue-200/60">
-                        <span>⚡</span> Sistem Observasi Otomatis Terpadu (AWS)
-                    </div>
-                    <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-                        <span>🗼</span> Simulasi Stasiun Cuaca Otomatis (Automatic Weather Station)
-                    </h3>
-                    <p className="text-xs text-slate-500">
-                        Integrasi menara 10m multi-sensor, proteksi petir, siklus telemetri batch 10-menit, dan hilirisasi peringatan bencana BMKG.
-                    </p>
-                </div>
-
-                {/* Status Ringkas Header */}
-                <div className="flex items-center gap-2">
-                    <span className={`text-xs font-bold px-3 py-1 rounded-full border ${isLoggerFallenByLightning ? 'bg-rose-100 text-rose-800 border-rose-300 animate-pulse' : isSignalOnline ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200 animate-pulse'}`}>
-                        {isLoggerFallenByLightning ? '⚡ Logger Konslet Petir' : isSignalOnline ? '📡 4G Telemetri Online' : '⚠️ Offline (Buffer Lokal)'}
-                    </span>
-                    <span className="text-xs font-mono font-bold bg-slate-900 text-cyan-400 px-3 py-1 rounded-full border border-slate-700 shadow-2xs">
-                        Kirim: 00:{String(countdownSeconds).padStart(2, '0')} (10m)
-                    </span>
-                </div>
-            </div>
+        <div className="space-y-6">
 
             {/* Layout Utama Asimetris: 60% Visual Menara Tower (7 Kolom) vs 40% Dasbor Telemetri & Skenario (5 Kolom) */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -203,11 +179,11 @@ export default function SimulasiAutomaticWeatherStation() {
                         {/* Status Bar Kecil di Atas Kanvas */}
                         <div className="flex items-center justify-between mb-2 text-xs">
                             <span className="font-bold text-slate-700 flex items-center gap-1.5">
-                                <span>{weatherScenario === 'clear' ? '☀️' : '⛈️'}</span>
+                                <span>{weatherScenario === 'clear' ? 'â˜€ï¸' : 'â›ˆï¸'}</span>
                                 <span>Kondisi Atmosfer: <strong>{weatherScenario === 'clear' ? 'Cerah Tropis (Normal)' : 'Badai Konvektif Ekstrem!'}</strong></span>
                             </span>
                             <span className={`text-[11px] font-bold ${sensorMetrics.isExtremeAlert ? 'text-rose-600 animate-pulse' : 'text-slate-600'}`}>
-                                {sensorMetrics.isExtremeAlert ? '🚨 ALARM BENCANA AKTIF!' : 'Status Cuaca Aman'}
+                                {sensorMetrics.isExtremeAlert ? 'ðŸš¨ ALARM BENCANA AKTIF!' : 'Status Cuaca Aman'}
                             </span>
                         </div>
 
@@ -261,7 +237,7 @@ export default function SimulasiAutomaticWeatherStation() {
                                 <line x1="12" y1="30" x2="24" y2="30" stroke="#ca8a04" strokeWidth="2" />
                                 <line x1="14" y1="34" x2="22" y2="34" stroke="#ca8a04" strokeWidth="1.5" />
                                 <text x="32" y="24" fill={isGroundingGood ? "#bbf7d0" : "#fca5a5"} fontSize="6" fontWeight="bold">
-                                    Grounding: {isGroundingGood ? '2.1 Ω' : '14.8 Ω (Bahaya)'}
+                                    Grounding: {isGroundingGood ? '2.1 Î©' : '14.8 Î© (Bahaya)'}
                                 </text>
                             </g>
 
@@ -280,7 +256,7 @@ export default function SimulasiAutomaticWeatherStation() {
                                     <g>
                                         <circle cx="-160" cy="-20" r="15" fill="none" stroke="#0284c7" strokeWidth="2" strokeDasharray="3 3" className="animate-ping" />
                                         <line x1="-150" y1="-20" x2="-20" y2="-18" stroke="#0284c7" strokeWidth="2.5" strokeDasharray="6 4" className="animate-pulse" />
-                                        <text x="-85" y="-30" fill="#0284c7" fontSize="7" fontWeight="bold">📡 Paket 10-Menit Meluncur!</text>
+                                        <text x="-85" y="-30" fill="#0284c7" fontSize="7" fontWeight="bold">ðŸ“¡ Paket 10-Menit Meluncur!</text>
                                     </g>
                                 )}
 
@@ -430,7 +406,7 @@ export default function SimulasiAutomaticWeatherStation() {
                                             weatherScenario === 'clear' ? 'bg-blue-600 text-white shadow-2xs' : 'text-slate-400 hover:text-white'
                                         }`}
                                     >
-                                        ☀️ Cerah Normal
+                                        â˜€ï¸ Cerah Normal
                                     </button>
                                     <button
                                         onClick={() => setWeatherScenario('storm')}
@@ -438,7 +414,7 @@ export default function SimulasiAutomaticWeatherStation() {
                                             weatherScenario === 'storm' ? 'bg-rose-600 text-white shadow-2xs' : 'text-slate-400 hover:text-white'
                                         }`}
                                     >
-                                        ⛈️ Badai Konvektif
+                                        â›ˆï¸ Badai Konvektif
                                     </button>
                                 </div>
                             </div>
@@ -452,7 +428,7 @@ export default function SimulasiAutomaticWeatherStation() {
                                         : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
                                 }`}
                             >
-                                <span>{!isSignalOnline ? '📵 Blank Spot (Pulihkan Sinyal)' : '📡 Uji Putus Sinyal (Blank Spot)'}</span>
+                                <span>{!isSignalOnline ? 'ðŸ“µ Blank Spot (Pulihkan Sinyal)' : 'ðŸ“¡ Uji Putus Sinyal (Blank Spot)'}</span>
                             </button>
                         </div>
                     </div>
@@ -468,7 +444,7 @@ export default function SimulasiAutomaticWeatherStation() {
                                     : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
                             }`}
                         >
-                            <span>{!isGroundingGood ? '⚡ Grounding Rusak (>5Ω)' : '✅ Grounding 2.1Ω (Aman)'}</span>
+                            <span>{!isGroundingGood ? 'âš¡ Grounding Rusak (>5Î©)' : 'âœ… Grounding 2.1Î© (Aman)'}</span>
                         </button>
 
                         {/* 2. Toggle Debu Panel Surya */}
@@ -480,7 +456,7 @@ export default function SimulasiAutomaticWeatherStation() {
                                     : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
                             }`}
                         >
-                            <span>{isSolarDirty ? '🧼 Lap Debu Solar Panel!' : '✨ Panel Surya Bersih'}</span>
+                            <span>{isSolarDirty ? 'ðŸ§¼ Lap Debu Solar Panel!' : 'âœ¨ Panel Surya Bersih'}</span>
                         </button>
 
                         {/* 3. Reset Fuse jika Datalogger Hang tersambar petir */}
@@ -495,7 +471,7 @@ export default function SimulasiAutomaticWeatherStation() {
                                     : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
                             }`}
                         >
-                            <span>{isLoggerFallenByLightning ? '🔄 Ganti Fuse / Reset' : '🛡️ Fuse Normal'}</span>
+                            <span>{isLoggerFallenByLightning ? 'ðŸ”„ Ganti Fuse / Reset' : 'ðŸ›¡ï¸ Fuse Normal'}</span>
                         </button>
                     </div>
 
@@ -503,7 +479,7 @@ export default function SimulasiAutomaticWeatherStation() {
                     <div className="p-3.5 bg-blue-50/80 rounded-2xl border border-blue-200/70 space-y-1.5 text-xs text-blue-950">
                         <div className="flex items-center justify-between font-bold">
                             <span className="text-blue-900 flex items-center gap-1.5">
-                                <span>🔍</span> Komponen Terpilih: {activeSensorInfo.title}
+                                <span>ðŸ”</span> Komponen Terpilih: {activeSensorInfo.title}
                             </span>
                             <span className="text-[10.5px] bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full border border-blue-200 font-mono">
                                 {activeSensorInfo.type}
@@ -531,7 +507,7 @@ export default function SimulasiAutomaticWeatherStation() {
                     }`}>
                         <div className="flex items-center justify-between">
                             <span className="text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
-                                <span>{sensorMetrics.isExtremeAlert ? '🚨' : '📡'}</span> Sistem Peringatan Dini Multi-Unsur
+                                <span>{sensorMetrics.isExtremeAlert ? 'ðŸš¨' : 'ðŸ“¡'}</span> Sistem Peringatan Dini Multi-Unsur
                             </span>
                             <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-black/30 text-white border border-white/20">
                                 WMO Station 96933
@@ -554,7 +530,7 @@ export default function SimulasiAutomaticWeatherStation() {
                                     onClick={() => setShowDisseminationModal(true)}
                                     className="w-full mt-2 py-2 px-3 bg-white text-rose-700 hover:bg-rose-50 font-extrabold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all cursor-pointer"
                                 >
-                                    <span>📱</span>
+                                    <span>ðŸ“±</span>
                                     <span>Buka Simulasi Diseminasi InfoBMKG & BPBD</span>
                                 </button>
                             )}
@@ -565,7 +541,7 @@ export default function SimulasiAutomaticWeatherStation() {
                     <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 sm:p-5 space-y-3.5 shadow-xs">
                         <div className="flex items-center justify-between">
                             <span className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-                                <span>📊</span> Dasbor Telemetri Terpadu AWS
+                                <span>ðŸ“Š</span> Dasbor Telemetri Terpadu AWS
                             </span>
                             <span className="text-[10px] bg-cyan-100 text-cyan-800 font-extrabold px-2 py-0.5 rounded-full border border-cyan-200">
                                 Batch: 10 Menit (Timer: 00:{String(countdownSeconds).padStart(2, '0')})
@@ -575,21 +551,21 @@ export default function SimulasiAutomaticWeatherStation() {
                         {/* Grid 6 Parameter Cuaca */}
                         <div className="grid grid-cols-2 gap-2 text-xs">
                             <div className="p-2.5 bg-white rounded-xl border border-slate-200 shadow-2xs">
-                                <span className="text-[10px] text-slate-400 block">🌡️ Suhu Udara (2m)</span>
+                                <span className="text-[10px] text-slate-400 block">ðŸŒ¡ï¸ Suhu Udara (2m)</span>
                                 <span className="text-base font-black text-slate-900 font-mono">
-                                    {sensorMetrics.temp}°C
+                                    {sensorMetrics.temp}Â°C
                                 </span>
                             </div>
 
                             <div className="p-2.5 bg-white rounded-xl border border-slate-200 shadow-2xs">
-                                <span className="text-[10px] text-slate-400 block">💧 Kelembapan (RH)</span>
+                                <span className="text-[10px] text-slate-400 block">ðŸ’§ Kelembapan (RH)</span>
                                 <span className="text-base font-black text-blue-700 font-mono">
                                     {sensorMetrics.rh}%
                                 </span>
                             </div>
 
                             <div className="p-2.5 bg-white rounded-xl border border-slate-200 shadow-2xs">
-                                <span className="text-[10px] text-slate-400 block">💨 Angin 10m (Ultrasonik)</span>
+                                <span className="text-[10px] text-slate-400 block">ðŸ’¨ Angin 10m (Ultrasonik)</span>
                                 <span className="text-base font-black text-cyan-700 font-mono">
                                     {sensorMetrics.windSpeed} Knot
                                 </span>
@@ -597,21 +573,21 @@ export default function SimulasiAutomaticWeatherStation() {
                             </div>
 
                             <div className="p-2.5 bg-white rounded-xl border border-slate-200 shadow-2xs">
-                                <span className="text-[10px] text-slate-400 block">⏱️ Tekanan (Barometer)</span>
+                                <span className="text-[10px] text-slate-400 block">â±ï¸ Tekanan (Barometer)</span>
                                 <span className="text-base font-black text-indigo-700 font-mono">
                                     {sensorMetrics.pressure} hPa
                                 </span>
                             </div>
 
                             <div className="p-2.5 bg-white rounded-xl border border-slate-200 shadow-2xs">
-                                <span className="text-[10px] text-slate-400 block">☀️ Radiasi Pyranometer</span>
+                                <span className="text-[10px] text-slate-400 block">â˜€ï¸ Radiasi Pyranometer</span>
                                 <span className="text-base font-black text-amber-600 font-mono">
-                                    {sensorMetrics.solarRad} W/m²
+                                    {sensorMetrics.solarRad} W/mÂ²
                                 </span>
                             </div>
 
                             <div className="p-2.5 bg-white rounded-xl border border-slate-200 shadow-2xs">
-                                <span className="text-[10px] text-slate-400 block">🌧️ Curah Hujan Instan</span>
+                                <span className="text-[10px] text-slate-400 block">ðŸŒ§ï¸ Curah Hujan Instan</span>
                                 <span className="text-base font-black text-teal-700 font-mono">
                                     {sensorMetrics.rainRate} mm/j
                                 </span>
@@ -621,7 +597,7 @@ export default function SimulasiAutomaticWeatherStation() {
                         {/* MANAJEMEN DAYA OFF-GRID MANDIRI */}
                         <div className="p-3 bg-white rounded-xl border border-slate-200 space-y-1.5 text-xs">
                             <span className="text-[10px] font-bold text-slate-800 uppercase tracking-wider block">
-                                🔋 Manajemen Daya Mandiri (Off-Grid Solar System):
+                                ðŸ”‹ Manajemen Daya Mandiri (Off-Grid Solar System):
                             </span>
                             <div className="flex items-center justify-between text-[11px] text-slate-600">
                                 <span>Panel Surya: <strong className={isSolarDirty ? "text-amber-600" : ""}>{sensorMetrics.solarPanelW} Watt</strong></span>
@@ -631,7 +607,7 @@ export default function SimulasiAutomaticWeatherStation() {
 
                         {/* FITUR KEANDALAN DATA RECOVERY (BLANK SPOT SIMULATION) */}
                         <div className="p-2.5 bg-amber-50/80 rounded-xl border border-amber-200/60 text-[10.5px] text-amber-950 leading-relaxed">
-                            💡 <strong>Keandalan Datalogger (Fail-Safe Storage):</strong> Jika menara AWS berada di lokasi blank spot seluler, sensor tetap bekerja dan data disimpan di memori internal SD Card (Buffer: {bufferedDataCount} paket). Begitu sinyal GSM pulih, seluruh data langsung melesat dikirim ke server pusat tanpa ada data yang hilang!
+                            ðŸ’¡ <strong>Keandalan Datalogger (Fail-Safe Storage):</strong> Jika menara AWS berada di lokasi blank spot seluler, sensor tetap bekerja dan data disimpan di memori internal SD Card (Buffer: {bufferedDataCount} paket). Begitu sinyal GSM pulih, seluruh data langsung melesat dikirim ke server pusat tanpa ada data yang hilang!
                         </div>
                     </div>
                 </div>
@@ -649,7 +625,7 @@ export default function SimulasiAutomaticWeatherStation() {
                     >
                         <div className="flex items-center justify-between pb-3 border-b border-slate-150">
                             <div className="flex items-center gap-2">
-                                <span className="text-2xl">📱</span>
+                                <span className="text-2xl">ðŸ“±</span>
                                 <div>
                                     <h4 className="text-base font-extrabold text-slate-900">Diseminasi Peringatan Dini BMKG</h4>
                                     <p className="text-[11px] text-slate-500">Hilirisasi Otomatis Data AWS ke Stakeholder & Publik</p>
@@ -659,7 +635,7 @@ export default function SimulasiAutomaticWeatherStation() {
                                 onClick={() => setShowDisseminationModal(false)}
                                 className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center font-bold text-sm cursor-pointer"
                             >
-                                ✕
+                                âœ•
                             </button>
                         </div>
 
@@ -667,7 +643,7 @@ export default function SimulasiAutomaticWeatherStation() {
                         <div className="bg-slate-900 text-white rounded-2xl p-4 space-y-3 border border-slate-800 shadow-inner">
                             <div className="flex items-center justify-between text-xs text-rose-400 font-bold border-b border-slate-800 pb-2">
                                 <span className="flex items-center gap-1.5">
-                                    <span>⚠️</span> INFO BMKG ALERT SYSTEM
+                                    <span>âš ï¸</span> INFO BMKG ALERT SYSTEM
                                 </span>
                                 <span className="font-mono text-[10px] text-slate-400">SEKARANG</span>
                             </div>

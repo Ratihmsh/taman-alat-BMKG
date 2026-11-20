@@ -31,8 +31,8 @@ export default function SimulasiPanciPenguapan() {
             label: 'Kemarau Terik Berangin',
             description: 'Radiasi matahari kuat dan angin kencang memicu laju evaporasi tinggi tanpa presipitasi.',
             windSpeed: 3.4, // m/s pada ketinggian 0.5 meter (Cup Anemometer)
-            waterTempMax: 32.5, // °C
-            waterTempMin: 23.0, // °C
+            waterTempMax: 32.5, // Â°C
+            waterTempMin: 23.0, // Â°C
             rainMm: 0.0, // mm dari Penakar Hujan
             targetWaterLevel: 192.8, // mm (air susut 7.2 mm)
             evaporationReal: 7.2, // mm
@@ -41,8 +41,8 @@ export default function SimulasiPanciPenguapan() {
             label: 'Hari Berawan & Hujan Lebat',
             description: 'Hujan lebat menambah air panci secara drastis, namun evaporasi tetap terjadi di sela waktu.',
             windSpeed: 1.2, // m/s
-            waterTempMax: 27.0, // °C
-            waterTempMin: 22.5, // °C
+            waterTempMax: 27.0, // Â°C
+            waterTempMin: 22.5, // Â°C
             rainMm: 18.0, // mm dari Penakar Hujan Hellmann/OBS
             targetWaterLevel: 213.5, // mm (P1 lebih tinggi dari P0!)
             evaporationReal: 4.5, // mm
@@ -72,31 +72,7 @@ export default function SimulasiPanciPenguapan() {
     };
 
     return (
-        <div className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-7 shadow-sm space-y-6">
-            {/* Header Ringkas Modul Simulasi */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-slate-150">
-                <div>
-                    <div className="inline-flex items-center gap-1.5 bg-cyan-50 text-cyan-800 font-bold text-[11px] px-3 py-1 rounded-full uppercase tracking-wider mb-1.5 border border-cyan-200/60">
-                        <span>💧</span> Hidrometeorologi & Evaporasi Terbuka
-                    </div>
-                    <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-                        <span>🌊</span> Simulasi Panci Penguapan (Open Pan Class A)
-                    </h3>
-                    <p className="text-xs text-slate-500">
-                        Simulasi operasional pembacaan Hook Gauge, koreksi neraca air curah hujan, Cup Anemometer 0.5m, dan pemeliharaan WMO.
-                    </p>
-                </div>
-
-                {/* Status Ringkas Header */}
-                <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold px-3 py-1 rounded-full border bg-cyan-50 text-cyan-700 border-cyan-200">
-                        {currentScenarioData.label}
-                    </span>
-                    <span className="text-xs font-mono font-bold bg-slate-900 text-cyan-400 px-3 py-1 rounded-full border border-slate-700 shadow-2xs">
-                        Evaporasi: {calculatedEvaporation} mm
-                    </span>
-                </div>
-            </div>
+        <div className="space-y-6">
 
             {/* Layout Utama 1 Section Terpadu */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -106,15 +82,15 @@ export default function SimulasiPanciPenguapan() {
                         {/* Status bar kecil di atas kanvas */}
                         <div className="flex items-center justify-between mb-2 text-xs">
                             <span className="font-bold text-slate-700 flex items-center gap-1.5">
-                                <span>{scenario === 'kemarau' ? '☀️' : '🌧️'}</span>
+                                <span>{scenario === 'kemarau' ? 'â˜€ï¸' : 'ðŸŒ§ï¸'}</span>
                                 <span>Kondisi Cuaca: <strong>{scenario === 'kemarau' ? 'Panas Terik & Angin Aktif' : 'Hujan Mengguyur Panci'}</strong></span>
                             </span>
                             <span className={`text-[11px] font-bold ${isHookTouchValid ? 'text-emerald-600' : 'text-amber-600 animate-pulse'}`}>
                                 {isHookTouchValid
-                                    ? '🎯 Meniskus Pas! Kail Menyentuh Air'
+                                    ? 'ðŸŽ¯ Meniskus Pas! Kail Menyentuh Air'
                                     : isHookSubmerged
-                                    ? '⚠️ Kail Terlalu Masuk (Tenggelam)'
-                                    : '🔍 Putar Mikrometer ke Bawah Menuju Air'}
+                                    ? 'âš ï¸ Kail Terlalu Masuk (Tenggelam)'
+                                    : 'ðŸ” Putar Mikrometer ke Bawah Menuju Air'}
                             </span>
                         </div>
 
@@ -240,7 +216,7 @@ export default function SimulasiPanciPenguapan() {
                                                 <rect x="8" y="-2" width="4" height="2" fill={isMagnetReset ? "#10b981" : "#ef4444"} />
                                                 <rect x="23" y="-2" width="4" height="2" fill={isMagnetReset ? "#10b981" : "#ef4444"} />
                                                 <text x="17" y="-9" textAnchor="middle" fill="#0c4a6e" fontSize="5" fontWeight="bold">
-                                                    Termometer Apung ({currentScenarioData.waterTempMax}°C)
+                                                    Termometer Apung ({currentScenarioData.waterTempMax}Â°C)
                                                 </text>
                                             </g>
 
@@ -322,7 +298,7 @@ export default function SimulasiPanciPenguapan() {
                                     : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
                             }`}
                         >
-                            <span>{hasLeaves ? '🍂 Serok Daun!' : '✨ Air Bebas Daun'}</span>
+                            <span>{hasLeaves ? 'ðŸ‚ Serok Daun!' : 'âœ¨ Air Bebas Daun'}</span>
                         </button>
 
                         {/* 2. Sikat Lumut Dasar Panci */}
@@ -334,7 +310,7 @@ export default function SimulasiPanciPenguapan() {
                                     : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
                             }`}
                         >
-                            <span>{hasMoss ? '🧽 Sikat Lumut!' : '✨ Dasar Mengkilap'}</span>
+                            <span>{hasMoss ? 'ðŸ§½ Sikat Lumut!' : 'âœ¨ Dasar Mengkilap'}</span>
                         </button>
 
                         {/* 3. Reset Magnet Batang Termometer Apung */}
@@ -346,7 +322,7 @@ export default function SimulasiPanciPenguapan() {
                                     : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
                             }`}
                         >
-                            <span>{!isMagnetReset ? '🧲 Tarik Magnet!' : '✅ Indeks Reset'}</span>
+                            <span>{!isMagnetReset ? 'ðŸ§² Tarik Magnet!' : 'âœ… Indeks Reset'}</span>
                         </button>
 
                         {/* 4. Isi Ulang Air Standar WMO */}
@@ -358,13 +334,13 @@ export default function SimulasiPanciPenguapan() {
                                     : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
                             }`}
                         >
-                            <span>{isWaterRefilled ? '🚰 Air Standar (5 cm)' : '💧 Cek Ketinggian'}</span>
+                            <span>{isWaterRefilled ? 'ðŸš° Air Standar (5 cm)' : 'ðŸ’§ Cek Ketinggian'}</span>
                         </button>
                     </div>
 
                     {/* BOX EDUKASI STANDAR OPERASIONAL (SOP) BMKG */}
                     <div className="p-3 bg-blue-50/80 rounded-xl border border-blue-200/70 text-[11px] text-blue-900 leading-relaxed flex items-start gap-2">
-                        <span className="text-sm shrink-0">📋</span>
+                        <span className="text-sm shrink-0">ðŸ“‹</span>
                         <div>
                             <strong>SOP Harian Observer Pukul 07:00 WIB:</strong>
                             <ul className="list-disc list-inside mt-1 space-y-0.5 text-[10.5px]">
@@ -385,7 +361,7 @@ export default function SimulasiPanciPenguapan() {
                                 Pilih Skenario Cuaca 24 Jam
                             </span>
                             <span className="text-[10px] bg-slate-800 text-cyan-400 font-mono px-2 py-0.5 rounded-full border border-slate-700">
-                                07:00 Kemarin ➔ 07:00 Hari Ini
+                                07:00 Kemarin âž” 07:00 Hari Ini
                             </span>
                         </div>
 
@@ -399,7 +375,7 @@ export default function SimulasiPanciPenguapan() {
                                         : 'bg-slate-800/60 border-slate-700 text-slate-400 hover:bg-slate-800'
                                 }`}
                             >
-                                <span className="text-sm font-extrabold block text-amber-400">☀️ Skenario A</span>
+                                <span className="text-sm font-extrabold block text-amber-400">â˜€ï¸ Skenario A</span>
                                 <span className="text-[11px] block font-semibold">Kemarau Terik</span>
                                 <span className="text-[10px] text-slate-400">Air susut murni (Hujan = 0 mm)</span>
                             </button>
@@ -412,7 +388,7 @@ export default function SimulasiPanciPenguapan() {
                                         : 'bg-slate-800/60 border-slate-700 text-slate-400 hover:bg-slate-800'
                                 }`}
                             >
-                                <span className="text-sm font-extrabold block text-cyan-400">🌧️ Skenario B</span>
+                                <span className="text-sm font-extrabold block text-cyan-400">ðŸŒ§ï¸ Skenario B</span>
                                 <span className="text-[11px] block font-semibold">Hujan Lebat</span>
                                 <span className="text-[10px] text-slate-400">Air panci naik (Hujan = 18 mm)</span>
                             </button>
@@ -427,7 +403,7 @@ export default function SimulasiPanciPenguapan() {
                     <div className="bg-white border border-slate-200 rounded-2xl p-4 space-y-3 shadow-2xs">
                         <div className="flex items-center justify-between">
                             <span className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-                                <span>🎯</span> Mini-Game: Putar Sekrup Hook Gauge
+                                <span>ðŸŽ¯</span> Mini-Game: Putar Sekrup Hook Gauge
                             </span>
                             <span className="text-xs font-mono font-bold text-cyan-700 bg-cyan-50 px-2.5 py-0.5 rounded-lg border border-cyan-200">
                                 {micrometerPos.toFixed(2)} mm
@@ -461,7 +437,7 @@ export default function SimulasiPanciPenguapan() {
                                 : 'bg-amber-50 text-amber-800 border-amber-200'
                         }`}>
                             <div className="flex items-center gap-2">
-                                <span className="text-base">{isHookTouchValid ? '✅' : '⚠️'}</span>
+                                <span className="text-base">{isHookTouchValid ? 'âœ…' : 'âš ï¸'}</span>
                                 <span className="text-[11px] font-bold">
                                     {isHookTouchValid
                                         ? 'Sentuhan Sempurna! Meniskus Terbentuk.'
@@ -493,14 +469,14 @@ export default function SimulasiPanciPenguapan() {
                         {/* 3 Kotak Data Pengukuran */}
                         <div className="grid grid-cols-3 gap-2 text-center text-xs">
                             <div className="p-2.5 bg-white rounded-xl border border-slate-200 shadow-2xs">
-                                <span className="text-[10px] text-slate-400 block">Tinggi Kemarin (P₀)</span>
+                                <span className="text-[10px] text-slate-400 block">Tinggi Kemarin (Pâ‚€)</span>
                                 <span className="text-xs sm:text-sm font-bold text-slate-800 font-mono">
                                     {P0.toFixed(1)} mm
                                 </span>
                             </div>
 
                             <div className="p-2.5 bg-white rounded-xl border border-slate-200 shadow-2xs">
-                                <span className="text-[10px] text-slate-400 block">Tinggi Hari Ini (P₁)</span>
+                                <span className="text-[10px] text-slate-400 block">Tinggi Hari Ini (Pâ‚)</span>
                                 <span className="text-xs sm:text-sm font-bold text-cyan-700 font-mono">
                                     {P1.toFixed(1)} mm
                                 </span>
@@ -516,7 +492,7 @@ export default function SimulasiPanciPenguapan() {
 
                         {/* Rumus Step-by-Step BMKG */}
                         {/* <div className="p-2.5 bg-cyan-50/80 rounded-xl border border-cyan-200/60 text-[10.5px] text-cyan-950 leading-relaxed font-mono">
-                            <strong>Rumus:</strong> E = (P₀ - P₁) + Curah Hujan (H) <br />
+                            <strong>Rumus:</strong> E = (Pâ‚€ - Pâ‚) + Curah Hujan (H) <br />
                             E = ({P0.toFixed(1)} - {P1.toFixed(1)}) + {currentScenarioData.rainMm.toFixed(1)} = <strong>{calculatedEvaporation} mm</strong>
                         </div> */}
 
@@ -526,8 +502,8 @@ export default function SimulasiPanciPenguapan() {
                                 Unsur Cuaca Pendukung Evaporasi:
                             </span>
                             <div className="flex items-center justify-between text-[11px] text-blue-800">
-                                <span>💨 Kecepatan Angin (0.5m): <strong>{currentScenarioData.windSpeed} m/s</strong></span>
-                                <span>🌡️ Suhu Air: <strong>{currentScenarioData.waterTempMin}°C – {currentScenarioData.waterTempMax}°C</strong></span>
+                                <span>ðŸ’¨ Kecepatan Angin (0.5m): <strong>{currentScenarioData.windSpeed} m/s</strong></span>
+                                <span>ðŸŒ¡ï¸ Suhu Air: <strong>{currentScenarioData.waterTempMin}Â°C â€“ {currentScenarioData.waterTempMax}Â°C</strong></span>
                             </div>
                         </div>
                     </div>

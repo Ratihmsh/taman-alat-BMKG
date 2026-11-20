@@ -41,8 +41,8 @@ export default function SimulasiSangkarMeteorologi() {
         kering: {
             name: 'Termometer Bola Kering',
             badge: 'Suhu Aktual',
-            icon: '🌡️',
-            val: `${ambientTemp}°C`,
+            icon: 'ðŸŒ¡ï¸',
+            val: `${ambientTemp}Â°C`,
             color: 'text-rose-600',
             border: 'border-rose-200',
             bg: 'bg-rose-50/70',
@@ -51,8 +51,8 @@ export default function SimulasiSangkarMeteorologi() {
         basah: {
             name: 'Termometer Bola Basah',
             badge: 'Kelembapan Udara (RH)',
-            icon: '💧',
-            val: `${(ambientTemp - 4.2).toFixed(1)}°C`,
+            icon: 'ðŸ’§',
+            val: `${(ambientTemp - 4.2).toFixed(1)}Â°C`,
             color: 'text-sky-600',
             border: 'border-sky-200',
             bg: 'bg-sky-50/70',
@@ -61,8 +61,8 @@ export default function SimulasiSangkarMeteorologi() {
         maksimum: {
             name: 'Termometer Maksimum',
             badge: 'Rekor Terpanas 24 Jam',
-            icon: '🔥',
-            val: `${maxIndexPos}°C`,
+            icon: 'ðŸ”¥',
+            val: `${maxIndexPos}Â°C`,
             color: 'text-amber-600',
             border: 'border-amber-200',
             bg: 'bg-amber-50/70',
@@ -71,8 +71,8 @@ export default function SimulasiSangkarMeteorologi() {
         minimum: {
             name: 'Termometer Minimum',
             badge: 'Rekor Terdingin 24 Jam',
-            icon: '❄️',
-            val: `${minIndexPos}°C`,
+            icon: 'â„ï¸',
+            val: `${minIndexPos}Â°C`,
             color: 'text-indigo-600',
             border: 'border-indigo-200',
             bg: 'bg-indigo-50/70',
@@ -81,35 +81,7 @@ export default function SimulasiSangkarMeteorologi() {
     };
 
     return (
-        <div className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-7 shadow-sm">
-            {/* Header Ringkas Section Tunggal */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pb-5 mb-5 border-b border-slate-150">
-                <div>
-                    <div className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 font-bold text-[11px] px-3 py-1 rounded-full uppercase tracking-wider mb-1.5 border border-blue-200/60">
-                        <span>⚡</span> Laboratorium Simulasi Interaktif
-                    </div>
-                    <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-                        <span>🏠</span> Simulasi Terpadu Sangkar Meteorologi
-                    </h3>
-                    <p className="text-xs text-slate-500">
-                        Geser slider waktu pengamatan 24 jam untuk melihat perubahan suhu, efek proteksi radiasi sangkar, dan intip instrumen di dalamnya.
-                    </p>
-                </div>
-
-                {/* Status Badges Cepat */}
-                <div className="flex items-center gap-2">
-                    <span className={`text-xs font-bold px-3 py-1 rounded-full border ${
-                        isInside
-                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                            : 'bg-rose-50 text-rose-700 border-rose-200 animate-pulse'
-                    }`}>
-                        {isInside ? '🛡️ Terlindungi Sangkar' : '⚠️ Terpapar Radiasi'}
-                    </span>
-                    {/* <span className="text-xs font-mono font-bold bg-slate-900 text-amber-400 px-3 py-1 rounded-full border border-slate-700 shadow-2xs">
-                        🕒 {String(hour).padStart(2, '0')}:00 WIB
-                    </span> */}
-                </div>
-            </div>
+        <div className="space-y-6">
 
             {/* Dashboard Terpadu: 1 Layar Grid Saling Terhubung */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -125,7 +97,7 @@ export default function SimulasiSangkarMeteorologi() {
                     }`}>
                         <div className="flex items-center justify-between mb-2 text-xs">
                             <span className="font-bold text-slate-700 flex items-center gap-1.5">
-                                <span>{isDaylight ? '☀️' : '🌙'}</span>
+                                <span>{isDaylight ? 'â˜€ï¸' : 'ðŸŒ™'}</span>
                                 <span>{isDaylight ? `Siang Hari (${hour}:00 WIB)` : `Malam / Subuh (${hour}:00 WIB)`}</span>
                             </span>
                             <span className="text-[11px] text-slate-500">
@@ -186,8 +158,8 @@ export default function SimulasiSangkarMeteorologi() {
 
                                     <g transform="translate(275, 80)">
                                         <rect x="0" y="0" width="150" height="52" rx="10" fill="#fef2f2" stroke="#ef4444" strokeWidth="2" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.1))" />
-                                        <text x="12" y="18" fill="#991b1b" fontSize="10" fontWeight="extrabold">⚠️ ERROR RADIASI!</text>
-                                        <text x="12" y="32" fill="#b91c1c" fontSize="9" fontWeight="bold">Terbaca: {displayedTemp}°C</text>
+                                        <text x="12" y="18" fill="#991b1b" fontSize="10" fontWeight="extrabold">âš ï¸ ERROR RADIASI!</text>
+                                        <text x="12" y="32" fill="#b91c1c" fontSize="9" fontWeight="bold">Terbaca: {displayedTemp}Â°C</text>
                                         <text x="12" y="44" fill="#dc2626" fontSize="8">(Dipanaskan sinar matahari)</text>
                                     </g>
                                 </g>
@@ -204,7 +176,7 @@ export default function SimulasiSangkarMeteorologi() {
                                     )}
 
                                     <path d="M 20 160 Q 90 145 160 160 T 240 160" fill="none" stroke="#0284c7" strokeWidth="2.5" strokeDasharray="5 5" />
-                                    <text x="15" y="150" fill="#0369a1" fontSize="9" fontWeight="bold">Sirkulasi Angin ➔</text>
+                                    <text x="15" y="150" fill="#0369a1" fontSize="9" fontWeight="bold">Sirkulasi Angin âž”</text>
 
                                     <line x1="205" y1="190" x2="195" y2="245" stroke="#64748b" strokeWidth="5" strokeLinecap="round" />
                                     <line x1="285" y1="190" x2="295" y2="245" stroke="#64748b" strokeWidth="5" strokeLinecap="round" />
@@ -265,8 +237,8 @@ export default function SimulasiSangkarMeteorologi() {
 
                                     <g transform="translate(320, 110)">
                                         <rect x="0" y="0" width="110" height="42" rx="8" fill="#f0fdf4" stroke="#22c55e" strokeWidth="1.5" />
-                                        <text x="8" y="16" fill="#166534" fontSize="9" fontWeight="extrabold">✅ SUHU AKURAT</text>
-                                        <text x="8" y="30" fill="#15803d" fontSize="9" fontWeight="bold">Ambien: {ambientTemp}°C</text>
+                                        <text x="8" y="16" fill="#166534" fontSize="9" fontWeight="extrabold">âœ… SUHU AKURAT</text>
+                                        <text x="8" y="30" fill="#15803d" fontSize="9" fontWeight="bold">Ambien: {ambientTemp}Â°C</text>
                                     </g>
                                 </g>
                             )}
@@ -287,7 +259,7 @@ export default function SimulasiSangkarMeteorologi() {
                                         isInside ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
                                     }`}
                                 >
-                                    🏠 Di Dalam Sangkar
+                                    ðŸ  Di Dalam Sangkar
                                 </button>
                                 <button
                                     onClick={() => setIsInside(false)}
@@ -295,7 +267,7 @@ export default function SimulasiSangkarMeteorologi() {
                                         !isInside ? 'bg-rose-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
                                     }`}
                                 >
-                                    ☀️ Di Luar Sangkar
+                                    â˜€ï¸ Di Luar Sangkar
                                 </button>
                             </div>
                         </div>
@@ -307,14 +279,14 @@ export default function SimulasiSangkarMeteorologi() {
                                     isDoorOpen ? 'bg-amber-500 hover:bg-amber-600 text-white' : 'bg-slate-800 hover:bg-slate-900 text-white'
                                 }`}
                             >
-                                <span>{isDoorOpen ? '🚪 Tutup Pintu' : '🔓 Buka & Intip Dalam'}</span>
+                                <span>{isDoorOpen ? 'ðŸšª Tutup Pintu' : 'ðŸ”“ Buka & Intip Dalam'}</span>
                             </button>
                         )}
                     </div>
 
                     {/* Ringkasan SOP Singkat */}
                     <div className="p-3 bg-blue-50/80 rounded-xl border border-blue-200/70 text-[11px] text-blue-900 leading-relaxed flex items-start gap-2">
-                        <span className="text-sm shrink-0">📋</span>
+                        <span className="text-sm shrink-0">ðŸ“‹</span>
                         <div>
                             <strong>Pengamatan BMKG:</strong> Observer mencatat data setiap jam sinoptik (07:00, 13:00, 18:00 WIB). Petugas cukup membaca jarum indeks yang tertinggal untuk rekor harian tanpa harus memantau 24 jam penuh!
                         </div>
@@ -328,7 +300,7 @@ export default function SimulasiSangkarMeteorologi() {
                     <div className="p-4 bg-slate-900 text-white rounded-2xl shadow-xs space-y-3">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                                <span className="text-lg">🕒</span>
+                                <span className="text-lg">ðŸ•’</span>
                                 <div>
                                     <span className="text-[10px] text-slate-400 uppercase tracking-wide block">Waktu Pengamatan</span>
                                     <span className="text-sm font-extrabold text-amber-400">
@@ -340,7 +312,7 @@ export default function SimulasiSangkarMeteorologi() {
                             <div className="text-right">
                                 <span className="text-[10px] text-slate-400 block">Suhu Terbaca:</span>
                                 <span className={`text-lg font-black ${isInside ? 'text-blue-400' : 'text-rose-400'}`}>
-                                    {displayedTemp}°C
+                                    {displayedTemp}Â°C
                                 </span>
                             </div>
                         </div>
@@ -392,9 +364,9 @@ export default function SimulasiSangkarMeteorologi() {
 
                         <p className="text-[11px] text-slate-300 leading-snug">
                             {isInside ? (
-                                <>💡 <em>Geser slider ke jam 14:00 lalu ke jam 20:00</em> untuk melihat jarum indeks Maksimum tertahan di rekor terpanas (<strong>{maxIndexPos}°C</strong>)!</>
+                                <>ðŸ’¡ <em>Geser slider ke jam 14:00 lalu ke jam 20:00</em> untuk melihat jarum indeks Maksimum tertahan di rekor terpanas (<strong>{maxIndexPos}Â°C</strong>)!</>
                             ) : (
-                                <>⚠️ <em>Di luar sangkar</em>, radiasi matahari langsung mendistorsi pembacaan termometer hingga <strong>{displayedTemp}°C</strong> (palsu)!</>
+                                <>âš ï¸ <em>Di luar sangkar</em>, radiasi matahari langsung mendistorsi pembacaan termometer hingga <strong>{displayedTemp}Â°C</strong> (palsu)!</>
                             )}
                         </p>
                     </div>
@@ -411,7 +383,7 @@ export default function SimulasiSangkarMeteorologi() {
                         </div>
 
                         {/* Tab Selector 4 Termometer */}
-                        <div className="grid grid-cols-2 gap-1.5">
+                        <div className="grid grid-cols-2 gap-2">
                             {Object.keys(toolData).map((key) => {
                                 const tool = toolData[key];
                                 const isSelected = selectedTool === key;
@@ -419,17 +391,17 @@ export default function SimulasiSangkarMeteorologi() {
                                     <button
                                         key={key}
                                         onClick={() => setSelectedTool(key)}
-                                        className={`p-2 rounded-xl text-left border transition-all cursor-pointer flex items-center justify-between ${
+                                        className={`p-2.5 rounded-xl text-left border transition-all cursor-pointer flex items-center justify-between gap-1.5 ${
                                             isSelected
                                                 ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
                                                 : 'bg-white hover:bg-slate-100 border-slate-200 text-slate-700'
                                         }`}
                                     >
-                                        <div className="flex items-center gap-1.5 truncate">
-                                            <span className="text-sm">{tool.icon}</span>
-                                            <span className="text-[11px] font-bold truncate">{tool.name.split(' ')[1] || tool.name}</span>
+                                        <div className="flex items-center gap-1.5 min-w-0">
+                                            <span className="text-base shrink-0">{tool.icon}</span>
+                                            <span className="text-xs font-bold truncate leading-tight">{tool.name}</span>
                                         </div>
-                                        <span className={`text-[10px] font-extrabold ${isSelected ? 'text-white' : 'text-blue-600'}`}>
+                                        <span className={`text-xs font-black shrink-0 ${isSelected ? 'text-white' : 'text-blue-600'}`}>
                                             {tool.val}
                                         </span>
                                     </button>
