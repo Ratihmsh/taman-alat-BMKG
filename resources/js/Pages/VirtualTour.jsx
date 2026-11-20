@@ -61,7 +61,7 @@ export default function VirtualTour({ tourSpot }) {
     return (
         <>
             <Head title="Virtual Tour 360° - Taman Alat BMKG" />
-            
+
             <div className="relative w-screen h-screen overflow-hidden bg-gray-950 select-none">
                 {/* 360 Panorama Viewer */}
                 <ErrorBoundary>
@@ -102,8 +102,8 @@ export default function VirtualTour({ tourSpot }) {
                 {/* Floating Top Navigation Bar */}
                 <div className="absolute top-4 left-4 right-4 z-40 flex items-center justify-between pointer-events-none">
                     <div className="flex items-center gap-3 pointer-events-auto">
-                        <Link 
-                            href="/" 
+                        <Link
+                            href="/"
                             className="inline-flex items-center gap-2 bg-white/90 hover:bg-white text-gray-800 font-semibold px-4 py-2.5 rounded-full shadow-lg backdrop-blur-md transition-all transform hover:scale-105 text-sm border border-white/40"
                         >
                             <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -111,7 +111,7 @@ export default function VirtualTour({ tourSpot }) {
                             </svg>
                             <span>Kembali ke Beranda</span>
                         </Link>
-                        
+
                         <div className="hidden sm:flex items-center bg-gray-900/80 backdrop-blur-md text-white px-4 py-2 rounded-full shadow-lg border border-white/10 text-xs font-medium">
                             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse mr-2"></span>
                             Taman Alat BMKG &bull; 360° View
@@ -160,11 +160,11 @@ export default function VirtualTour({ tourSpot }) {
 
                 {/* Sliding Instruments Drawer */}
                 {showDrawer && (
-                    <div 
+                    <div
                         className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex justify-end"
                         onClick={() => setShowDrawer(false)}
                     >
-                        <div 
+                        <div
                             className="w-full max-w-md bg-white h-full shadow-2xl p-6 overflow-y-auto flex flex-col"
                             onClick={e => e.stopPropagation()}
                         >
@@ -173,7 +173,7 @@ export default function VirtualTour({ tourSpot }) {
                                     <h2 className="text-lg font-bold text-gray-900">Daftar {instruments.length} Alat Utama BMKG</h2>
                                     <p className="text-xs text-gray-500">Pilih alat untuk melihat detail penjelasan</p>
                                 </div>
-                                <button 
+                                <button
                                     onClick={() => setShowDrawer(false)}
                                     className="text-gray-400 hover:text-gray-700 p-2 rounded-full hover:bg-gray-100 transition-colors"
                                 >
@@ -190,7 +190,7 @@ export default function VirtualTour({ tourSpot }) {
                                     const functionDesc = parts[1]?.trim() || '';
 
                                     return (
-                                        <div 
+                                        <div
                                             key={inst.id}
                                             onClick={() => {
                                                 handleHotspotClick(inst);
@@ -229,15 +229,15 @@ export default function VirtualTour({ tourSpot }) {
 
                 {/* Info Card Pop-up Modal */}
                 {selectedInstrument && (
-                    <div 
+                    <div
                         className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
                         onClick={closePopup}
                     >
-                        <div 
+                        <div
                             className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-lg relative max-h-[90vh] overflow-y-auto"
                             onClick={e => e.stopPropagation()}
                         >
-                            <button 
+                            <button
                                 onClick={closePopup}
                                 className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 p-1.5 rounded-full hover:bg-gray-100 transition-colors"
                             >
@@ -245,7 +245,7 @@ export default function VirtualTour({ tourSpot }) {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                                 </svg>
                             </button>
-                            
+
                             <div className="mb-3">
                                 {selectedInstrument.category && (
                                     <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2.5 py-1 rounded-full uppercase font-semibold tracking-wide mb-2">
