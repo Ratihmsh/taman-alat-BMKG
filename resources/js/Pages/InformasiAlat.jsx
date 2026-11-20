@@ -176,7 +176,7 @@ export default function InformasiAlat({ instruments = [], selectedId = null }) {
                         </div>
 
                         {/* Horizontal Instrument Quick Selector Pills */}
-                        <div className="mt-6 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+                        {/* <div className="mt-6 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
                             {instruments.map((inst, index) => {
                                 const isSelected = inst.id === activeInstrument?.id;
                                 return (
@@ -198,7 +198,7 @@ export default function InformasiAlat({ instruments = [], selectedId = null }) {
                                     </button>
                                 );
                             })}
-                        </div>
+                        </div> */}
                     </div>
                 </section>
 
