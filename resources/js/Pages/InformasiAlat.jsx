@@ -555,23 +555,6 @@ export default function InformasiAlat({ instruments = [], selectedId = null }) {
                                     const isSelected = inst.id === activeInstrument?.id;
                                     const originalIndex = (index % (instruments.length || 1)) + 1;
 
-                                return (
-                                    <div
-                                        key={inst.id}
-                                        onClick={() => handleSelectInstrument(inst.id)}
-                                        className={`bg-white rounded-2xl border p-5 flex flex-col justify-between transition-all cursor-pointer group hover:shadow-lg ${
-                                            isSelected
-                                                ? 'border-blue-600 ring-2 ring-blue-500/20 shadow-md bg-blue-50/20'
-                                                : 'border-slate-200/80 hover:border-blue-300 shadow-xs'
-                                        }`}
-                                    >
-                                        <div>
-                                            {/* Header: Index number + Category */}
-                                            <div className="flex items-center justify-between gap-2 mb-3">
-                                                <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-extrabold ${
-                                                    isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-700 group-hover:bg-blue-50 group-hover:text-blue-600'
-                                                }`}>
-                                                    #{index + 1}
                                     return (
                                         <div
                                             key={`${inst.id}-${index}`}
@@ -685,11 +668,6 @@ export default function InformasiAlat({ instruments = [], selectedId = null }) {
                             >
                                 ✕
                             </button>
-                            <img
-                                src={activeInstrument?.image_path || '/images/panci_penguapan.png'}
-                                alt={activeInstrument?.name}
-                                className="max-h-[80vh] w-auto rounded-2xl shadow-2xl object-contain border border-white/20"
-                            />
                             {isVideoMedia(activeInstrument?.image_path) ? (
                                 <video
                                     src={activeInstrument?.image_path}
