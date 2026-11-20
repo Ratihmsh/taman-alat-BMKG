@@ -288,33 +288,30 @@ export default function InformasiAlat({ instruments = [], selectedId = null }) {
                                 {/* Left Column: Photo Showcase */}
                                 <div className="lg:col-span-6 flex flex-col">
                                     <div className="rounded-2xl overflow-hidden relative shadow-sm group aspect-[16/11] bg-slate-100 flex items-center justify-center border border-slate-200/80">
-                                        <img
-                                            src={activeInstrument.image_path || '/images/panci_penguapan.png'}
-                                            alt={activeInstrument.name}
-                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
-                                            onError={(e) => {
-                                                e.target.src = '/images/panci_penguapan.png';
-                                            }}
-                                        />
-                                        {isVideoMedia(activeInstrument?.image_path) ? (
-                                            <video
-                                                src={activeInstrument.image_path}
-                                                controls
-                                                autoPlay
-                                                muted
-                                                loop
-                                                playsInline
-                                                className="w-full h-full object-cover"
-                                            />
+                                        {activeInstrument?.image_path ? (
+                                            isVideoMedia(activeInstrument.image_path) ? (
+                                                <video
+                                                    src={activeInstrument.image_path}
+                                                    controls
+                                                    autoPlay
+                                                    muted
+                                                    loop
+                                                    playsInline
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            ) : (
+                                                <img
+                                                    src={activeInstrument.image_path}
+                                                    alt={activeInstrument?.name}
+                                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
+                                                />
+                                            )
                                         ) : (
-                                            <img
-                                                src={activeInstrument?.image_path || '/images/panci_penguapan.png'}
-                                                alt={activeInstrument?.name}
-                                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
-                                                onError={(e) => {
-                                                    e.target.src = '/images/panci_penguapan.png';
-                                                }}
-                                            />
+                                            <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 text-slate-400 p-6 text-center">
+                                                <span className="text-4xl mb-2">{getCategoryIcon(activeInstrument?.category)}</span>
+                                                <span className="text-sm font-semibold text-slate-600">{activeInstrument?.name}</span>
+                                                <span className="text-xs text-slate-400 mt-1">Belum ada media foto/video untuk alat ini</span>
+                                            </div>
                                         )}
 
                                         {/* Bottom-left: "Lihat gambar / video penuh" button */}
@@ -581,7 +578,6 @@ export default function InformasiAlat({ instruments = [], selectedId = null }) {
                                                         src={inst.image_path || `/images/crops/instrument_${(inst.id - 1) % 12}.png`}
                                                         alt={inst.name}
                                                         className="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500 pointer-events-none"
-                                                        onError={(e) => { e.target.src = '/images/panci_penguapan.png'; }}
                                                     />
                                                 )}
 
@@ -678,7 +674,7 @@ export default function InformasiAlat({ instruments = [], selectedId = null }) {
                                 />
                             ) : (
                                 <img
-                                    src={activeInstrument?.image_path || '/images/panci_penguapan.png'}
+                                    src={activeInstrument?.image_path || `/images/crops/instrument_${((activeInstrument?.id || 1) - 1) % 12}.png`}
                                     alt={activeInstrument?.name}
                                     className="max-h-[80vh] w-auto rounded-2xl shadow-2xl object-contain border border-white/20"
                                 />
